@@ -1,5 +1,5 @@
 # MALV-API
-REST API that allows to exchange data with MyAnimeList.
+Node.js REST API that allows to interact with MyAnimeList.
 
 ## Anime
 Provide details on an anime that are not available in the animelist.

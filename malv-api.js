@@ -1,6 +1,6 @@
 /**
  * @name MALV-API
- * @description API which allows MALV to exchange data with MyAnimeList.
+ * @description Node.js REST API that allows to interact with MyAnimeList.
  * @author Josselin Buils <josselin.buils@gmail.com>
  */
 

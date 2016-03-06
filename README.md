@@ -178,3 +178,44 @@ Provide a top anime list.
   }
 ]
 ```
+
+## Verify credentials
+Verify credentials of a MyAnimeList account.
+
+#### URL
+
+  `/verifycredentials/:user/:password`
+
+#### Method
+
+  `GET`
+
+#### URL params
+
+   - **user** *string*
+   - **password** *password*
+
+#### Response
+
+  JSON object containing the following fields:
+  - **authenticated** *boolean*
+  - **secureKey** *string* Only if authenticated is true.
+
+#### Examples
+
+  `/verifycredentials/youbi325/wrongpassword`
+
+```json
+{
+  "authenticated": false
+}
+```
+
+  `/verifycredentials/youbi325/rightpassword`
+
+```json
+{
+  "authenticated": true,
+  "secureKey": "7gu9vgv5gu76hyih7hgi7jhb7"
+}
+```

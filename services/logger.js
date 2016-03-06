@@ -4,6 +4,7 @@
  * @author Josselin Buils <josselin.buils@gmail.com>
  */
 
+// External libraries
 var fs = require('fs');
 
 module.exports = {

@@ -52,8 +52,8 @@ Provide details on an anime that are not available in the animelist.
 }
 ```
 
-## Animelist
-Provide the animelist of a user.
+## Anime list
+Provide the anime list of a user.
 
 #### URL
 
@@ -126,12 +126,12 @@ Provide the animelist of a user.
 ]
 ```
 
-## Top
-Provide a top anime list.
+## Top list
+Provide a top list.
 
 #### URL
 
-  `/top/:name/:page`
+  `/toplist/:name/:page`
 
 #### Method
 
@@ -160,7 +160,7 @@ Provide a top anime list.
 
 #### Example
 
-  `/top/all/1`
+  `/toplist/all/1`
 
 ```json
 [

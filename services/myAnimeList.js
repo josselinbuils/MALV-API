@@ -4,9 +4,15 @@
  * @author Josselin Buils <josselin.buils@gmail.com>
  */
 
-var config = require('../config'),
-    Promise = require('promise'),
+// External libraries
+var Promise = require('promise'),
     request = require('request');
+
+// Configuration
+var config = require('../config');
+
+// Services
+var crypt = require('../services/crypt');
 
 module.exports = {
     /**

@@ -3,5 +3,6 @@
   "encryptionKey": "",
   "port": 8080,
   "myAnimeListApiKey": "",
-  "myAnimeListHost": "http://myanimelist.net"
+  "myAnimeListHost": "http://myanimelist.net",
+  "originsAllowed": "*"
 }

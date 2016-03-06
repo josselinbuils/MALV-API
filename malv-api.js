@@ -5,140 +5,16 @@
  */
 
 // Dependencies
-var crypto = require('crypto'),
+var config = require('./config'),
+    crypt = require('./crypt'),
     express = require('express'),
-    fs = require('fs'),
+    logger = require('./logger'),
+    myAnimeList = require('./myAnimeList'),
     Promise = require('promise'),
-    request = require('request'),
     xml2js = require('xml2js');
 
 // Application
 var app = express();
-
-/**
- * @name logger
- * @description Log provider.
- */
-var logger = (function () {
-
-    return {
-        /**
-         * @name error
-         * @description Log an error.
-         * @param {string} str Error to log.
-         */
-        error: error,
-
-        /**
-         * @name log
-         * @description Log a message.
-         * @param {string} str Message to log.
-         */
-        log: info
-    };
-
-    function error(str) {
-        log('ERROR', str);
-    }
-
-    function info(str) {
-        log('INFO', str);
-    }
-
-    function log(level, str) {
-        str = '[' + new Date().toDateString() + ' ' + new Date().toLocaleTimeString() + '] [' + level + '] ' + str;
-        console.log(str);
-        fs.appendFile('logs.txt', str + '\n');
-    }
-})();
-
-/**
- * @name crypt
- * @description Encryption provider.
- */
-var crypt = (function () {
-
-    var algorithm = 'aes256',
-        key = 'malv-api-encryption-tag';
-
-    return {
-        /**
-         * @name encrypt
-         * @description Encrypt data.
-         * @param {string} str Data to encrypt.
-         */
-        encrypt: encrypt,
-
-        /**
-         * @name decrypt
-         * @description Decrypt data.
-         * @param {string} str Data to decrypt.
-         */
-        decrypt: decrypt
-    };
-
-    function encrypt(str) {
-        var cipher = crypto.createCipher(algorithm, key);
-        return cipher.update(str, 'utf8', 'hex') + cipher.final('hex');
-    }
-
-    function decrypt(str) {
-        var decipher = crypto.createDecipher(algorithm, key);
-        return decipher.update(str, 'hex', 'utf8') + decipher.final('utf8');
-    }
-})();
-
-/**
- * @name http
- * @description HTTP requests provider.
- */
-var http = (function () {
-
-    var apiKey = 'MyAnimeList API key';
-
-    return {
-        /**
-         * @name get
-         * @description Make an http get request.
-         * @param {string} url Url to get.
-         * @param {string} user Username to use for authentication.
-         * @param {string} url Secure key to use for authentication.
-         * @returns {string} Data got.
-         */
-        get: get
-    };
-
-    function get(url, user, secureKey) {
-
-        return new Promise(function (resolve, reject) {
-
-            var headers = {
-                'User-Agent': apiKey
-            };
-
-            if (user && secureKey) {
-                headers.Authorization = 'Basic ' + new Buffer(user + ':' + crypt.decrypt(secureKey)).toString('base64');
-            }
-
-            request({
-                url: url,
-                headers: headers
-            }, function (error, response, body) {
-
-                if (!error && response.statusCode == 200) {
-                    resolve(body);
-                } else {
-                    logger.error('Error ' + response.statusCode + ': ' + response.statusMessage);
-                    reject({
-                        statusCode: response.statusCode,
-                        statusMessage: response.statusMessage
-                    });
-                }
-            });
-        });
-    }
-
-})();
 
 logger.log('MALV API is running');
 
@@ -154,35 +30,7 @@ app.use(function (req, res, next) {
  * @param {number} id Id of the anime.
  * @returns {object} JSON object containing the details.
  */
-app.get('/anime/:id', function (req, res) {
-
-    var id = req.params.id,
-        time = new Date().getTime(),
-        url = 'http://myanimelist.net/anime/' + id;
-
-    logger.log('Get details of anime ' + id);
-
-    res.setHeader('Content-Type', 'application/json');
-
-    http.get(url).then(function (data) {
-
-        logger.log('Details of anime ' + id + ' got in ' + (new Date().getTime() - time) + 'ms');
-
-        try {
-            res.send(formatAnime(data));
-        } catch (e) {
-            var error = 'Cannot format details of anime ' + id;
-            logger.error(error + ': ' + e.stack);
-            res.status(500).json({error: error});
-        }
-
-    }, function (error) {
-        var errorMessage = 'Cannot retrieve details of anime ' + id + ': ' + error.statusMessage;
-        logger.error(errorMessage);
-        res.status(statusCode).json({error: errorMessage});
-    });
-
-});
+app.get('/anime/:id', getAnime);
 
 /**
  * @name /animelist/:user
@@ -190,37 +38,7 @@ app.get('/anime/:id', function (req, res) {
  * @param {string} user User.
  * @returns {Array} Array of JSON objects containing anime information.
  */
-app.get('/animelist/:user', function (req, res) {
-
-    var user = req.params.user,
-        time = new Date().getTime(),
-        url = 'http://myanimelist.net/malappinfo.php?u=' + user + '&status=all';
-
-    logger.log('Get animelist of user ' + user);
-
-    res.setHeader('Content-Type', 'application/json');
-
-    http.get(url).then(function (data) {
-
-        logger.log('Animelist of user ' + user + ' got in ' + (new Date().getTime() - time) + 'ms');
-
-        try {
-            formatAnimeList(data).then(function (animelist) {
-                res.json(animelist);
-            });
-        } catch (e) {
-            var error = 'Cannot format the animelist of user ' + user;
-            logger.error(error + ': ' + e.stack);
-            res.status(500).json({error: error});
-        }
-
-    }, function (error) {
-        var errorMessage = 'Cannot retrieve animelist of user ' + user + ': ' + error.statusMessage;
-        logger.error(errorMessage);
-        res.status(statusCode).json({error: errorMessage});
-    });
-
-});
+app.get('/animelist/:user', getAnimeList);
 
 /**
  * @name /top/:name/:page
@@ -229,45 +47,7 @@ app.get('/animelist/:user', function (req, res) {
  * @param {number} page Page.
  * @returns {Array} Array of JSON objects containing anime information.
  */
-app.get('/top/:name/:page', function (req, res) {
-
-    var name = req.params.name,
-        validNames = ['all', 'airing', 'bypopularity', 'movie', 'ova', 'special', 'tv', 'upcoming'];
-
-    if (validNames.indexOf(name) === -1) {
-        var error = 'Invalid top name: ' + name;
-        logger.error(error);
-        res.status(500).json({error: error});
-        return;
-    }
-
-    var page = req.params.page,
-        time = new Date().getTime(),
-        url = 'http://myanimelist.net/topanime.php?limit=' + ((req.params.page - 1) * 50) + (name !== 'all' ? '&type=' + name : '');
-
-    logger.log('Get page ' + page + ' of top ' + name);
-
-    res.setHeader('Content-Type', 'application/json');
-
-    http.get(url).then(function (data) {
-
-        logger.log('Page ' + page + ' of top ' + name + ' got in ' + (new Date().getTime() - time) + 'ms');
-
-        try {
-            res.json(formatTop(data));
-        } catch (e) {
-            var error = 'Cannot format the page ' + page + ' of top ' + name;
-            logger.error(error + ': ' + e.stack);
-            res.status(500).json({error: error});
-        }
-
-    }, function (error) {
-        var errorMessage = 'Cannot retrieve the page ' + page + ' of top ' + name + ': ' + error.statusMessage;
-        logger.error(errorMessage);
-        res.status(statusCode).json({error: errorMessage});
-    });
-
-});
+app.get('/top/:name/:page', getTopList);
 
 /**
  * @name /verifycredentials/:user/:password
@@ -276,40 +56,9 @@ app.get('/top/:name/:page', function (req, res) {
  * @param {string} password Password.
  * @returns {object} JSON object containing the verification result.
  */
-app.get('/verifycredentials/:user/:password', function (req, res) {
+app.get('/verifycredentials/:user/:password', verifyCredentials);
 
-    var user = req.params.user,
-        secureKey = crypt.encrypt(req.params.password),
-        time = new Date().getTime(),
-        url = 'http://myanimelist.net/api/account/verify_credentials.xml';
-
-    logger.log('Verify credentials of user ' + user);
-
-    res.setHeader('Content-Type', 'application/json');
-
-    http.get(url, user, secureKey).then(function () {
-
-        logger.log('Credentials of user ' + user + ' verified in ' + (new Date().getTime() - time) + 'ms');
-
-        res.json({
-            authenticated: true,
-            secureKey: secureKey
-        });
-
-    }, function (error) {
-        if (error.statusCode === 401) {
-            res.json({
-                authenticated: false
-            });
-        } else {
-            var errorMessage = 'Cannot verify credentials of user ' + user + ': ' + error.statusMessage;
-            logger.error(error);
-            res.status(error.statusCode).json({error: errorMessage});
-        }
-    });
-});
-
-app.listen(8080);
+app.listen(config.port);
 
 /**
  * @name formatAnime
@@ -372,7 +121,18 @@ function formatAnimeList(data) {
         xml2js.parseString(data, function (err, res) {
 
             if (err) {
-                throw Error('error during xml parsing');
+                reject('error during xml parsing');
+                return;
+            }
+
+            if (!res.myanimelist) {
+                reject('invalid data received from myanimelist');
+                return;
+            }
+
+            if (res.myanimelist.error) {
+                reject(String(res.myAnimeList.error));
+                return;
             }
 
             var animelist = [];
@@ -412,11 +172,11 @@ function formatAnimeList(data) {
 }
 
 /**
- * @name formatTop
+ * @name formatTopList
  * @description Format top data from MyAnimeList.
  * @param {string} data Data to format.
  */
-function formatTop(data) {
+function formatTopList(data) {
 
     var animes = [];
 
@@ -436,4 +196,164 @@ function formatTop(data) {
     }
 
     return animes;
+}
+
+/**
+ * @name getAnime
+ * @description Anime request handler.
+ * @param {object} req Request provider.
+ * @param {object} res Result provider.
+ */
+function getAnime(req, res) {
+
+    var id = req.params.id,
+        time = new Date().getTime(),
+        url = '/anime/' + id;
+
+    logger.log('Get details of anime ' + id);
+
+    res.setHeader('Content-Type', 'application/json');
+
+    myAnimeList.get(url).then(function (data) {
+
+        logger.log('Details of anime ' + id + ' got in ' + (new Date().getTime() - time) + 'ms');
+
+        try {
+            res.send(formatAnime(data));
+        } catch (e) {
+            var error = 'Cannot format details of anime ' + id;
+            logger.error(error + ': ' + e.stack);
+            res.status(500).json({error: error});
+        }
+
+    }, function (error) {
+        var errorMessage = 'Cannot retrieve details of anime ' + id + ': ' + error.statusMessage.toLowerCase();
+        res.status(500).json({error: errorMessage});
+    });
+}
+
+/**
+ * @name getAnimeList
+ * @description Anime list request handler.
+ * @param {object} req Request provider.
+ * @param {object} res Result provider.
+ */
+function getAnimeList(req, res) {
+
+    var user = req.params.user,
+        time = new Date().getTime(),
+        url = '/malappinfo.php?u=' + user + '&status=all';
+
+    logger.log('Get animelist of user ' + user);
+
+    res.setHeader('Content-Type', 'application/json');
+
+    myAnimeList.get(url).then(function (data) {
+
+        logger.log('Anime list of user ' + user + ' got in ' + (new Date().getTime() - time) + 'ms');
+
+        try {
+            formatAnimeList(data).then(function (animeList) {
+                    res.json(animeList);
+                }, function (error) {
+                    var errorMessage = 'Cannot format the animelist of user ' + user + ': ' + error.toLowerCase();
+                    logger.error(errorMessage);
+                    res.status(500).json({error: errorMessage});
+                }
+            );
+        } catch (e) {
+            var error = 'Cannot format the animelist of user ' + user;
+            logger.error(error + ': ' + e.stack);
+            res.status(500).json({error: error});
+        }
+
+    }, function (error) {
+        var errorMessage = 'Cannot retrieve animelist of user ' + user + ': ' + error.statusMessage;
+        logger.error(errorMessage);
+        res.status(statusCode).json({error: errorMessage});
+    });
+}
+
+/**
+ * @name getTopList
+ * @description Top list request handler.
+ * @param {object} req Request provider.
+ * @param {object} res Result provider.
+ */
+function getTopList(req, res) {
+
+    var name = req.params.name,
+        validNames = ['all', 'airing', 'bypopularity', 'movie', 'ova', 'special', 'tv', 'upcoming'];
+
+    if (validNames.indexOf(name) === -1) {
+        var error = 'Invalid top name: ' + name;
+        logger.error(error);
+        res.status(500).json({error: error});
+        return;
+    }
+
+    var page = req.params.page,
+        time = new Date().getTime(),
+        url = '/topanime.php?limit=' + ((req.params.page - 1) * 50) + (name !== 'all' ? '&type=' + name : '');
+
+    logger.log('Get page ' + page + ' of top ' + name);
+
+    res.setHeader('Content-Type', 'application/json');
+
+    myAnimeList.get(url).then(function (data) {
+
+        logger.log('Page ' + page + ' of top ' + name + ' got in ' + (new Date().getTime() - time) + 'ms');
+
+        try {
+            res.json(formatTopList(data));
+        } catch (e) {
+            var error = 'Cannot format the page ' + page + ' of top ' + name;
+            logger.error(error + ': ' + e.stack);
+            res.status(500).json({error: error});
+        }
+
+    }, function (error) {
+        var errorMessage = 'Cannot retrieve the page ' + page + ' of top ' + name + ': ' + error.statusMessage;
+        logger.error(errorMessage);
+        res.status(statusCode).json({error: errorMessage});
+    });
+}
+
+/**
+ * @name verifyCredentials
+ * @description Credentials request handler.
+ * @param {object} req Request provider.
+ * @param {object} res Result provider.
+ */
+function verifyCredentials(req, res) {
+
+    var user = req.params.user,
+        secureKey = crypt.encrypt(req.params.password),
+        time = new Date().getTime(),
+        url = '/api/account/verify_credentials.xml';
+
+    logger.log('Verify credentials of user ' + user);
+
+    res.setHeader('Content-Type', 'application/json');
+
+    myAnimeList.get(url, user, secureKey).then(function () {
+
+        logger.log('Credentials of user ' + user + ' verified in ' + (new Date().getTime() - time) + 'ms');
+
+        res.json({
+            authenticated: true,
+            secureKey: secureKey
+        });
+
+    }, function (error) {
+        if (error.statusCode === 401) {
+            res.json({
+                authenticated: false
+            });
+        } else {
+            var errorMessage = 'Cannot verify credentials of user ' + user + ': ' + error.statusMessage;
+            logger.error(error);
+            res.status(error.statusCode).json({error: errorMessage});
+        }
+    });
 }

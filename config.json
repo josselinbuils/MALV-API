@@ -1,0 +1,7 @@
+{
+  "encryptionAlgorithm": "aes256",
+  "encryptionKey": "",
+  "port": 8080,
+  "myAnimeListApiKey": "",
+  "myAnimeListHost": "http://myanimelist.net"
+}

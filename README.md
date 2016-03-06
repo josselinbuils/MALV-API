@@ -166,14 +166,14 @@ Provide a top anime list.
 [
   {
     "imageUrl": "http://cdn.myanimelist.net/images/anime/5/47421.jpg",
-    "rank": "1",
-    "score": "9.25",
+    "rank": 1,
+    "score": 9.25,
     "title": "Fullmetal Alchemist: Brotherhood"
   },
   {
     "imageUrl": "http://cdn.myanimelist.net/images/anime/5/73199.jpg",
-    "rank": "2",
-    "score": "9.17",
+    "rank": 2,
+    "score": 9.17,
     "title": "Steins;Gate"
   }
 ]

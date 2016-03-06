@@ -94,7 +94,7 @@ var crypt = (function () {
  */
 var http = (function () {
 
-    var apiKey = 'api-indiv-EF3095545BF402BA6BB54BD826D919AD';
+    var apiKey = 'MyAnimeList API key';
 
     return {
         /**
@@ -142,8 +142,18 @@ var http = (function () {
 
 logger.log('MALV API is running');
 
-// secureKey: 7e5c43964e8fa57ea7ad662e5a6e7d9a
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
 
+/**
+ * @name /anime/:id
+ * @description Provide details on an anime that are not available in the animelist.
+ * @param {number} id Id of the anime.
+ * @returns {object} JSON object containing the details.
+ */
 app.get('/anime/:id', function (req, res) {
 
     var id = req.params.id,
@@ -172,7 +182,15 @@ app.get('/anime/:id', function (req, res) {
         res.status(statusCode).json({error: errorMessage});
     });
 
-}).get('/animelist/:user', function (req, res) {
+});
+
+/**
+ * @name /animelist/:user
+ * @description Provide the animelist of a user.
+ * @param {string} user User.
+ * @returns {Array} Array of JSON objects containing anime information.
+ */
+app.get('/animelist/:user', function (req, res) {
 
     var user = req.params.user,
         time = new Date().getTime(),
@@ -202,7 +220,16 @@ app.get('/anime/:id', function (req, res) {
         res.status(statusCode).json({error: errorMessage});
     });
 
-}).get('/top/:name/:page', function (req, res) {
+});
+
+/**
+ * @name /top/:name/:page
+ * @description Provide a top anime list.
+ * @param {string} name Name of the top list.
+ * @param {number} page Page.
+ * @returns {Array} Array of JSON objects containing anime information.
+ */
+app.get('/top/:name/:page', function (req, res) {
 
     var name = req.params.name,
         validNames = ['all', 'airing', 'bypopularity', 'movie', 'ova', 'special', 'tv', 'upcoming'];
@@ -240,7 +267,16 @@ app.get('/anime/:id', function (req, res) {
         res.status(statusCode).json({error: errorMessage});
     });
 
-}).get('/verifyCredentials/:user/:password', function (req, res) {
+});
+
+/**
+ * @name /verifycredentials/:user/:password
+ * @description Verify credentials of a MyAnimeList account.
+ * @param {string} user User.
+ * @param {string} password Password.
+ * @returns {object} JSON object containing the verification result.
+ */
+app.get('/verifycredentials/:user/:password', function (req, res) {
 
     var user = req.params.user,
         secureKey = crypt.encrypt(req.params.password),
@@ -392,8 +428,8 @@ function formatTop(data) {
             animeData = match[0];
 
         anime.imageUrl = animeData.match(/<img[^>]*src="([^"]*)t.jpg"/)[1] + '.jpg';
-        anime.rank = animeData.match(/<span[^>]*top-anime-rank[^>]*>(\d*)/)[1];
-        anime.score = animeData.match(/<span class="text on">((\d||\.)*)/)[1];
+        anime.rank = parseInt(animeData.match(/<span[^>]*top-anime-rank[^>]*>(\d*)/)[1]);
+        anime.score = parseFloat(animeData.match(/<span class="text on">((\d||\.)*)/)[1]);
         anime.title = animeData.match(/<a class="hoverinfo_trigger[^>]*>([^<]*)<\/a>/)[1];
 
         animes.push(anime);

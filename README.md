@@ -4,21 +4,25 @@ REST API that allows to exchange data with MyAnimeList. The API returns JSON obj
 ## Anime
 Provide details on an anime that are not available in the animelist.
 
-#### Syntax
-```
-/anime/[id]
-```
+- **URL**
 
-#### Return
-Anime object.
-```json
-{
-  "genres": ["Genre 1", "Genre 2"],
-  "popularity": 1,
-  "rank": 1,
-  "rating": "Rating",
-  "score": 10,
-  "studios": ["Studio 1", "Studio 2"],
-  "synopsis": "Synopsis"
-}
-```
+  `/anime/:id`
+
+- **Method**
+
+  `GET`
+
+-  **URL Params**
+
+   - **id** *integer*
+
+- **Response**
+
+  JSON object containing the following fields:
+  - **genres** *array of string*
+  - **popularity** *integer*
+  - **rank** *integer*
+  - **rating** *string*
+  - **score** *float*
+  - **studios** *array of string*
+  - **synopsis** *string*

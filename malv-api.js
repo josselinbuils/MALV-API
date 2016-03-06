@@ -6,10 +6,10 @@
 
 // Dependencies
 var config = require('./config'),
-    crypt = require('./crypt'),
+    crypt = require('./services/crypt'),
     express = require('express'),
-    logger = require('./logger'),
-    myAnimeList = require('./myAnimeList'),
+    logger = require('./services/logger'),
+    myAnimeList = require('./services/myAnimeList'),
     Promise = require('promise'),
     xml2js = require('xml2js');
 

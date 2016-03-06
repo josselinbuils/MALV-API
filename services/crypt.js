@@ -4,7 +4,7 @@
  * @author Josselin Buils <josselin.buils@gmail.com>
  */
 
-var config = require('./config'),
+var config = require('../config'),
     crypto = require('crypto');
 
 module.exports = {

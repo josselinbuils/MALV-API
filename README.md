@@ -4,19 +4,19 @@ REST API that allows to exchange data with MyAnimeList.
 ## Anime
 Provide details on an anime that are not available in the animelist.
 
-- **URL:**
+#### URL
 
   `/anime/:id`
 
-- **Method:**
+#### Method
 
   `GET`
 
--  **URL params:**
+#### URL params
 
    - **id** *integer*
 
-- **Response:**
+#### Response
 
   JSON object containing the following fields:
   - **genres** *array of string*
@@ -27,7 +27,7 @@ Provide details on an anime that are not available in the animelist.
   - **studios** *array of string*
   - **synopsis** *string*
 
-- **Example:**
+#### Example
 
   `/anime/1`
 
@@ -48,6 +48,6 @@ Provide details on an anime that are not available in the animelist.
   "studios": [
     "Sunrise"
   ],
-  "synopsis": "In the year 2071, humanity has colonized several of the planets and moons of the solar system [...]"
+  "synopsis": "In the year 2071, humanity has colonized several of the planets [...]"
 }
 ```

@@ -19,12 +19,12 @@ Provide details on an anime that are not available in the animelist.
 #### Response
 
   JSON object containing the following fields:
-  - **genres** *array of strings*
+  - **genres** *Array of string*
   - **popularity** *integer*
   - **rank** *integer*
   - **rating** *string*
   - **score** *float*
-  - **studios** *array of strings*
+  - **studios** *Array of string*
   - **synopsis** *string*
 
 #### Example
@@ -81,7 +81,7 @@ Provide the animelist of a user.
   - **myWatchedEpisodes** *integer*
   - **startDate** *timestamp*
   - **status** *string*
-  - **synonyms** *array of strings*
+  - **synonyms** *Array of string*
   - **title** *string*
   - **type** *string*
 

@@ -203,13 +203,7 @@ Verify credentials of a MyAnimeList account.
 
 #### Examples
 
-  `/verifycredentials/youbi325/wrongpassword`
-
-```json
-{
-  "authenticated": false
-}
-```
+##### Success
 
   `/verifycredentials/youbi325/rightpassword`
 
@@ -217,5 +211,15 @@ Verify credentials of a MyAnimeList account.
 {
   "authenticated": true,
   "secureKey": "7gu9vgv5gu76hyih7hgi7jhb7"
+}
+```
+
+##### Fail
+
+  `/verifycredentials/youbi325/wrongpassword`
+
+```json
+{
+  "authenticated": false
 }
 ```

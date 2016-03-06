@@ -52,7 +52,7 @@ Provide details on an anime that are not available in the animelist.
 }
 ```
 
-## Animelsi
+## Animelist
 Provide the animelist of a user.
 
 #### URL
@@ -122,6 +122,59 @@ Provide the animelist of a user.
     "synonyms": [],
     "title": "Trigun",
     "type": "TV"
+  }
+]
+```
+
+## Top
+Provide a top anime list.
+
+#### URL
+
+  `/top/:name/:page`
+
+#### Method
+
+  `GET`
+
+#### URL params
+
+   - **name** *string*
+     - all
+     - airing
+     - bypopularity
+     - movie
+     - ova
+     - special
+     - tv
+     - upcoming
+   - **page** *integer*
+
+#### Response
+
+  Array of JSON objects containing the following fields:
+  - **imageUrl** *string*
+  - **rank** *integer*
+  - **score** *float*
+  - **title** *string*
+
+#### Example
+
+  `/top/all/1`
+
+```json
+[
+  {
+    "imageUrl": "http://cdn.myanimelist.net/images/anime/5/47421.jpg",
+    "rank": "1",
+    "score": "9.25",
+    "title": "Fullmetal Alchemist: Brotherhood"
+  },
+  {
+    "imageUrl": "http://cdn.myanimelist.net/images/anime/5/73199.jpg",
+    "rank": "2",
+    "score": "9.17",
+    "title": "Steins;Gate"
   }
 ]
 ```

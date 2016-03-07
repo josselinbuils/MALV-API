@@ -10,11 +10,16 @@
 var Promise = require('Promise'),
     xml2js = require('xml2js');
 
+// Configuration
+var config = require('../config');
+
 // Services
 var logger = require('../services/logger'),
     myAnimeList = require('../services/myAnimeList');
 
-module.exports = function (req, res) {
+module.exports = animeListHandler;
+
+function animeListHandler(req, res) {
 
     var user = req.params.user,
         time = new Date().getTime(),
@@ -44,9 +49,9 @@ module.exports = function (req, res) {
         }
 
     }, function (error) {
-        var errorMessage = 'Cannot retrieve animelist of user ' + user + ': ' + error.statusMessage;
+        var errorMessage = 'Cannot retrieve animelist of user ' + user + ': ' + error.statusMessage.toLowerCase();
         logger.error(errorMessage);
-        res.status(statusCode).json({error: errorMessage});
+        res.status(500).json({error: errorMessage});
     });
 };
 

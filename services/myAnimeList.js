@@ -12,7 +12,8 @@ var Promise = require('promise'),
 var config = require('../config');
 
 // Services
-var crypt = require('../services/crypt');
+var crypt = require('../services/crypt'),
+    logger = require('../services/logger');
 
 module.exports = {
     /**
@@ -26,7 +27,7 @@ module.exports = {
     get: get
 };
 
-function get(url, user, secureKey) {
+function get(url, user, secureKey, retries) {
 
     return new Promise(function (resolve, reject) {
 
@@ -46,10 +47,30 @@ function get(url, user, secureKey) {
             if (!error && response.statusCode == 200) {
                 resolve(body);
             } else {
-                reject({
-                    statusCode: response.statusCode,
-                    statusMessage: response.statusMessage
-                });
+
+                retries = retries || config.retries;
+
+                if (response.statusMessage === 'Too Many Requests' && retries > 0) {
+
+                    logger.error('Too many requests, retry #' + (config.retries - retries + 1) + ' in ' + config.retryDelay + 'ms');
+
+                    setTimeout(function () {
+                        get(url, user, secureKey, retries - 1).then(function (body) {
+                            resolve(body);
+                        }, function (error) {
+                            reject({
+                                statusCode: error.statusCode,
+                                statusMessage: error.statusMessage
+                            });
+                        });
+                    }, config.retryDelay);
+
+                } else {
+                    reject({
+                        statusCode: response.statusCode,
+                        statusMessage: response.statusMessage
+                    });
+                }
             }
         });
     });

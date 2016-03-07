@@ -4,5 +4,7 @@
   "port": 8080,
   "myAnimeListApiKey": "",
   "myAnimeListHost": "http://myanimelist.net",
-  "originsAllowed": "*"
+  "originsAllowed": "*",
+  "retries": 3,
+  "retryDelay": 500
 }

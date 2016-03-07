@@ -6,11 +6,16 @@
  * @param {object} res Result provider.
  */
 
+// Configuration
+var config = require('../config');
+
 // Services
 var logger = require('../services/logger'),
     myAnimeList = require('../services/myAnimeList');
 
-module.exports = function (req, res) {
+module.exports = animeHandler;
+
+function animeHandler(req, res) {
 
     var id = req.params.id,
         time = new Date().getTime(),
@@ -34,6 +39,7 @@ module.exports = function (req, res) {
 
     }, function (error) {
         var errorMessage = 'Cannot retrieve details of anime ' + id + ': ' + error.statusMessage.toLowerCase();
+        logger.error(errorMessage);
         res.status(500).json({error: errorMessage});
     });
 };

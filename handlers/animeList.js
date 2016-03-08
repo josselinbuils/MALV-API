@@ -7,7 +7,7 @@
  */
 
 // External libraries
-var Promise = require('Promise'),
+var Promise = require('promise'),
     xml2js = require('xml2js');
 
 // Configuration
@@ -25,35 +25,35 @@ function animeListHandler(req, res) {
         time = new Date().getTime(),
         url = '/malappinfo.php?u=' + user + '&status=all';
 
-    logger.log('Get animelist of user ' + user);
+    logger.log('animeListHandler: get animelist of user ' + user);
 
     res.setHeader('Content-Type', 'application/json');
 
     myAnimeList.get(url).then(function (data) {
 
-        logger.log('Anime list of user ' + user + ' got in ' + (new Date().getTime() - time) + 'ms');
+        logger.log('animeListHandler: anime list of user ' + user + ' got in ' + (new Date().getTime() - time) + 'ms');
 
         try {
             formatAnimeList(data).then(function (animeList) {
                     res.json(animeList);
                 }, function (error) {
                     var errorMessage = 'Cannot format the animelist of user ' + user + ': ' + error.toLowerCase();
-                    logger.error(errorMessage);
+                    logger.error('animeListHandler: ' + errorMessage.toLowerCase());
                     res.status(500).json({error: errorMessage});
                 }
             );
         } catch (e) {
-            var error = 'Cannot format the animelist of user ' + user;
-            logger.error(error + ': ' + e.stack);
-            res.status(500).json({error: error});
+            var errorMessage = 'Cannot format the animelist of user ' + user;
+            logger.error('animeListHandler: ' + errorMessage.toLowerCase() + ': ' + e.stack);
+            res.status(500).json({error: errorMessage});
         }
 
     }, function (error) {
         var errorMessage = 'Cannot retrieve animelist of user ' + user + ': ' + error.statusMessage.toLowerCase();
-        logger.error(errorMessage);
+        logger.error('animeListHandler: ' + errorMessage.toLowerCase());
         res.status(500).json({error: errorMessage});
     });
-};
+}
 
 /**
  * @name formatAnimeList

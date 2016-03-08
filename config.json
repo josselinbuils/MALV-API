@@ -2,9 +2,11 @@
   "encryptionAlgorithm": "aes256",
   "encryptionKey": "",
   "port": 8080,
+  "maxSockets": 3,
   "myAnimeListApiKey": "",
   "myAnimeListHost": "http://myanimelist.net",
   "originsAllowed": "*",
+  "requestTimeout": 10000,
   "retries": 3,
-  "retryDelay": 500
+  "retryDelay": 0
 }

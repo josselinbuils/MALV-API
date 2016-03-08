@@ -18,13 +18,13 @@ module.exports = function (req, res) {
         time = new Date().getTime(),
         url = '/api/account/verify_credentials.xml';
 
-    logger.log('Verify credentials of user ' + user);
+    logger.log('verifyCredentialsHandler: verify credentials of user ' + user);
 
     res.setHeader('Content-Type', 'application/json');
 
     myAnimeList.get(url, user, secureKey).then(function () {
 
-        logger.log('Credentials of user ' + user + ' verified in ' + (new Date().getTime() - time) + 'ms');
+        logger.log('verifyCredentialsHandler: credentials of user ' + user + ' verified in ' + (new Date().getTime() - time) + 'ms');
 
         res.json({
             authenticated: true,
@@ -38,8 +38,8 @@ module.exports = function (req, res) {
             });
         } else {
             var errorMessage = 'Cannot verify credentials of user ' + user + ': ' + error.statusMessage;
-            logger.error(error);
-            res.status(error.statusCode).json({error: errorMessage});
+            logger.error('verifyCredentialsHandler: ' + errorMessage.toLowerCase());
+            res.status(500).json({error: errorMessage});
         }
     });
 };

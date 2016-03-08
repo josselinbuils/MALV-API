@@ -27,6 +27,13 @@ module.exports = {
     get: get
 };
 
+var http = request.defaults({
+    pool: {
+        maxSockets: config.maxSockets
+    },
+    timeout: config.requestTimeout
+});
+
 function get(url, user, secureKey, retries) {
 
     return new Promise(function (resolve, reject) {
@@ -39,7 +46,7 @@ function get(url, user, secureKey, retries) {
             headers.Authorization = 'Basic ' + new Buffer(user + ':' + crypt.decrypt(secureKey)).toString('base64');
         }
 
-        request({
+        http({
             url: config.myAnimeListHost + url,
             headers: headers
         }, function (error, response, body) {
@@ -50,9 +57,9 @@ function get(url, user, secureKey, retries) {
 
                 retries = retries || config.retries;
 
-                if (response.statusMessage === 'Too Many Requests' && retries > 0) {
+                if (response && response.statusMessage === 'Too Many Requests' && retries > 0) {
 
-                    logger.error('Too many requests, retry #' + (config.retries - retries + 1) + ' in ' + config.retryDelay + 'ms');
+                    logger.error('myAnimeList: too many requests, retry #' + (config.retries - retries + 1) + ' in ' + config.retryDelay + 'ms');
 
                     setTimeout(function () {
                         get(url, user, secureKey, retries - 1).then(function (body) {
@@ -66,9 +73,15 @@ function get(url, user, secureKey, retries) {
                     }, config.retryDelay);
 
                 } else {
+                    var statusMessage = response ? response.statusMessage : error.code;
+
+                    if (statusMessage === 'ETIMEDOUT') {
+                        statusMessage = 'connection timed out'
+                    }
+
                     reject({
-                        statusCode: response.statusCode,
-                        statusMessage: response.statusMessage
+                        statusCode: response ? response.statusCode : null,
+                        statusMessage: statusMessage
                     });
                 }
             }

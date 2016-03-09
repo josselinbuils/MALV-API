@@ -68,7 +68,7 @@ function formatTopList(data) {
         var score = animeData.match(/<td class="score[^>]*>.*<span[^>]*>((\d||\.)*)/);
 
         anime.imageUrl = animeData.match(/<img[^>]*src="([^"]*)t.jpg"/)[1] + '.jpg';
-        anime.rank = parseInt(animeData.match(/<span[^>]*top-anime-rank[^>]*>(\d*)/)[1]);
+        anime.topRank = parseInt(animeData.match(/<span[^>]*top-anime-rank[^>]*>(\d*)/)[1]);
         anime.membersScore = score[1] ? parseFloat(score[1]) : null;
         anime.title = animeData.match(/<a class="hoverinfo_trigger[^>]*>([^<]*)<\/a>/)[1];
 

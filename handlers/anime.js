@@ -30,15 +30,15 @@ function animeHandler(req, res) {
         logger.log('animeHandler: details of anime ' + id + ' got in ' + (new Date().getTime() - time) + 'ms');
 
         try {
-            res.send(formatAnime(data));
+            res.json(formatAnime(data));
         } catch (e) {
-            var error = 'animeHandler: cannot format details of anime ' + id;
+            var error = 'Cannot format details of anime ' + id;
             logger.error('animeHandler: ' + errorMessage.toLowerCase() + ': ' + e.stack);
             res.status(500).json({error: error});
         }
 
     }, function (error) {
-        var errorMessage = 'animeHandler: cannot retrieve details of anime ' + id + ': ' + error.statusMessage.toLowerCase();
+        var errorMessage = 'Cannot retrieve details of anime ' + id + ': ' + error.statusMessage.toLowerCase();
         logger.error('animeHandler: ' + errorMessage.toLowerCase());
         res.status(500).json({error: errorMessage});
     });

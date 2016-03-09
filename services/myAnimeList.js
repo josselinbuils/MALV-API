@@ -55,7 +55,9 @@ function get(url, user, secureKey, retries) {
                 resolve(body);
             } else {
 
-                retries = retries || config.retries;
+                if (retries === undefined) {
+                    retries = config.retries;
+                }
 
                 if (response && response.statusMessage === 'Too Many Requests' && retries > 0) {
 

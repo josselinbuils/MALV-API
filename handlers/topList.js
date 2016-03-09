@@ -26,26 +26,26 @@ module.exports = function (req, res) {
         time = new Date().getTime(),
         url = '/topanime.php?limit=' + ((req.params.page - 1) * 50) + (name !== 'all' ? '&type=' + name : '');
 
-    logger.log('Get page ' + page + ' of top ' + name);
+    logger.log('topListHandler: get page ' + page + ' of top ' + name);
 
     res.setHeader('Content-Type', 'application/json');
 
     myAnimeList.get(url).then(function (data) {
 
-        logger.log('Page ' + page + ' of top ' + name + ' got in ' + (new Date().getTime() - time) + 'ms');
+        logger.log('topListHandler: page ' + page + ' of top ' + name + ' got in ' + (new Date().getTime() - time) + 'ms');
 
         try {
             res.json(formatTopList(data));
         } catch (e) {
-            var error = 'Cannot format the page ' + page + ' of top ' + name;
-            logger.error(error + ': ' + e.stack);
+            var errorMessage = 'Cannot format the page ' + page + ' of top ' + name;
+            logger.error('topListHandler: ' + errorMessage.toLowerCase() + ': ' + e.stack);
             res.status(500).json({error: error});
         }
 
     }, function (error) {
-        var errorMessage = 'Cannot retrieve the page ' + page + ' of top ' + name + ': ' + error.statusMessage;
-        logger.error(errorMessage);
-        res.status(statusCode).json({error: errorMessage});
+        var errorMessage = 'Cannot retrieve the page ' + page + ' of top ' + name + ': ' + error.statusMessage.toLowerCase();
+        logger.error('topListHandler: ' + errorMessage.toLowerCase());
+        res.status(500).json({error: errorMessage});
     });
 };
 
@@ -65,9 +65,11 @@ function formatTopList(data) {
         var anime = {},
             animeData = match[0];
 
+        var score = animeData.match(/<td class="score[^>]*>.*<span[^>]*>((\d||\.)*)/);
+
         anime.imageUrl = animeData.match(/<img[^>]*src="([^"]*)t.jpg"/)[1] + '.jpg';
         anime.rank = parseInt(animeData.match(/<span[^>]*top-anime-rank[^>]*>(\d*)/)[1]);
-        anime.score = parseFloat(animeData.match(/<span class="text on">((\d||\.)*)/)[1]);
+        anime.membersScore = score[1] ? parseFloat(score[1]) : null;
         anime.title = animeData.match(/<a class="hoverinfo_trigger[^>]*>([^<]*)<\/a>/)[1];
 
         animes.push(anime);

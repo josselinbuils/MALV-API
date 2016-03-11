@@ -7,23 +7,23 @@
  */
 
 // External libraries
-var Promise = require('promise'),
-    xml2js = require('xml2js');
+var Promise = require('promise');
+var xml2js = require('xml2js');
 
 // Configuration
 var config = require('../config');
 
 // Services
-var logger = require('../services/logger'),
-    myAnimeList = require('../services/myAnimeList');
+var logger = require('../services/logger');
+var myAnimeList = require('../services/myAnimeList');
 
 module.exports = animeListHandler;
 
 function animeListHandler(req, res) {
 
-    var user = req.params.user,
-        time = new Date().getTime(),
-        url = '/malappinfo.php?u=' + user + '&status=all';
+    var user = req.params.user;
+    var time = new Date().getTime();
+    var url = '/malappinfo.php?u=' + user + '&status=all';
 
     logger.log('animeListHandler: get animelist of user ' + user);
 

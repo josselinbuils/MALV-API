@@ -7,13 +7,13 @@
  */
 
 // Services
-var logger = require('../services/logger'),
-    myAnimeList = require('../services/myAnimeList');
+var logger = require('../services/logger');
+var myAnimeList = require('../services/myAnimeList');
 
 module.exports = function (req, res) {
 
-    var name = req.params.name,
-        validNames = ['all', 'airing', 'bypopularity', 'movie', 'ova', 'special', 'tv', 'upcoming'];
+    var name = req.params.name;
+    var validNames = ['all', 'airing', 'bypopularity', 'movie', 'ova', 'special', 'tv', 'upcoming'];
 
     if (validNames.indexOf(name) === -1) {
         var error = 'Invalid top name: ' + name;
@@ -22,9 +22,9 @@ module.exports = function (req, res) {
         return;
     }
 
-    var page = req.params.page,
-        time = new Date().getTime(),
-        url = '/topanime.php?limit=' + ((req.params.page - 1) * 50) + (name !== 'all' ? '&type=' + name : '');
+    var page = req.params.page;
+    var time = new Date().getTime();
+    var url = '/topanime.php?limit=' + ((req.params.page - 1) * 50) + (name !== 'all' ? '&type=' + name : '');
 
     logger.log('topListHandler: get page ' + page + ' of top ' + name);
 
@@ -58,12 +58,12 @@ function formatTopList(data) {
 
     var animes = [];
 
-    var reg = /<tr class="ranking-list">((?!<\/tr>)(.||\s))*<\/tr>/g,
-        match;
+    var reg = /<tr class="ranking-list">((?!<\/tr>)(.||\s))*<\/tr>/g;
+    var match;
 
     while (match = reg.exec(data)) {
-        var anime = {},
-            animeData = match[0];
+        var anime = {};
+        var animeData = match[0];
 
         var score = animeData.match(/<td class="score[^>]*>.*<span[^>]*>((\d||\.)*)/);
 

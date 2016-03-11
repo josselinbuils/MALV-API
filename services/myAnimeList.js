@@ -5,15 +5,15 @@
  */
 
 // External libraries
-var Promise = require('promise'),
-    request = require('request');
+var Promise = require('promise');
+var request = require('request');
 
 // Configuration
 var config = require('../config');
 
 // Services
-var crypt = require('../services/crypt'),
-    logger = require('../services/logger');
+var crypt = require('../services/crypt');
+var logger = require('../services/logger');
 
 module.exports = {
     /**

@@ -7,16 +7,16 @@
  */
 
 // Services
-var crypt = require('../services/crypt'),
-    logger = require('../services/logger'),
-    myAnimeList = require('../services/myAnimeList');
+var crypt = require('../services/crypt');
+var logger = require('../services/logger');
+var myAnimeList = require('../services/myAnimeList');
 
 module.exports = function (req, res) {
 
-    var user = req.params.user,
-        secureKey = crypt.encrypt(req.params.password),
-        time = new Date().getTime(),
-        url = '/api/account/verify_credentials.xml';
+    var user = req.params.user;
+    var secureKey = crypt.encrypt(req.params.password);
+    var time = new Date().getTime();
+    var url = '/api/account/verify_credentials.xml';
 
     logger.log('verifyCredentialsHandler: verify credentials of user ' + user);
 

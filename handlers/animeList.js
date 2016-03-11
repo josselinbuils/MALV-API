@@ -2,8 +2,6 @@
  * @name animeListHandler
  * @description Anime list request handler.
  * @author Josselin Buils <josselin.buils@gmail.com>
- * @param {object} req Request provider.
- * @param {object} res Result provider.
  */
 
 // External libraries
@@ -19,7 +17,7 @@ var myAnimeList = require('../services/myAnimeList');
 
 module.exports = animeListHandler;
 
-function animeListHandler(req, res) {
+function animeListHandler(req, res, next) {
 
     var user = req.params.user;
     var time = new Date().getTime();
@@ -27,31 +25,25 @@ function animeListHandler(req, res) {
 
     logger.log('animeListHandler: get animelist of user ' + user);
 
-    res.setHeader('Content-Type', 'application/json');
-
     myAnimeList.get(url).then(function (data) {
 
         logger.log('animeListHandler: anime list of user ' + user + ' got in ' + (new Date().getTime() - time) + 'ms');
 
         try {
             formatAnimeList(data).then(function (animeList) {
-                    res.json(animeList);
-                }, function (error) {
-                    var errorMessage = 'Cannot format the animelist of user ' + user + ': ' + error.toLowerCase();
-                    logger.error('animeListHandler: ' + errorMessage.toLowerCase());
-                    res.status(500).json({error: errorMessage});
-                }
-            );
-        } catch (e) {
-            var errorMessage = 'Cannot format the animelist of user ' + user;
-            logger.error('animeListHandler: ' + errorMessage.toLowerCase() + ': ' + e.stack);
-            res.status(500).json({error: errorMessage});
+                res.json(animeList);
+            }, function (error) {
+                error.message = 'Cannot format the animelist of user ' + user + ': ' + error.message.toLowerCase();
+                next(error);
+            });
+        } catch (error) {
+            error.message = 'Cannot format the animelist of user ' + user;
+            next(error);
         }
 
     }, function (error) {
-        var errorMessage = 'Cannot retrieve animelist of user ' + user + ': ' + error.statusMessage.toLowerCase();
-        logger.error('animeListHandler: ' + errorMessage.toLowerCase());
-        res.status(500).json({error: errorMessage});
+        error.message = 'Cannot retrieve animelist of user ' + user + ': ' + error.message.toLowerCase();
+        next(error);
     });
 }
 
@@ -86,20 +78,20 @@ function formatAnimeList(data) {
     };
 
     return new Promise(function (resolve, reject) {
-        xml2js.parseString(data, function (err, res) {
+        xml2js.parseString(data, function (error, res) {
 
-            if (err) {
-                reject('error during xml parsing');
+            if (error) {
+                reject(new Error('Error during xml parsing: ' + error.message.toLowerCase()));
                 return;
             }
 
             if (!res.myanimelist) {
-                reject('invalid data received from myanimelist');
+                reject(new Error('Invalid data received from myanimelist'));
                 return;
             }
 
             if (res.myanimelist.error) {
-                reject(String(res.myAnimeList.error));
+                reject(new Error(String(res.myAnimeList.error)));
                 return;
             }
 

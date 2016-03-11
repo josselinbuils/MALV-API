@@ -8,5 +8,6 @@
   "originsAllowed": "*",
   "requestTimeout": 10000,
   "retries": 3,
-  "retryDelay": 0
+  "retryDelay": 500,
+  "stackTraceLimit": 5
 }

@@ -2,8 +2,6 @@
  * @name animeHandler
  * @description Anime request handler.
  * @author Josselin Buils <josselin.buils@gmail.com>
- * @param {object} req Request provider.
- * @param {object} res Result provider.
  */
 
 // Configuration
@@ -15,7 +13,7 @@ var myAnimeList = require('../services/myAnimeList');
 
 module.exports = animeHandler;
 
-function animeHandler(req, res) {
+function animeHandler(req, res, next) {
 
     var id = req.params.id;
     var time = new Date().getTime();
@@ -23,24 +21,20 @@ function animeHandler(req, res) {
 
     logger.log('animeHandler: get details of anime ' + id);
 
-    res.setHeader('Content-Type', 'application/json');
-
     myAnimeList.get(url).then(function (data) {
 
         logger.log('animeHandler: details of anime ' + id + ' got in ' + (new Date().getTime() - time) + 'ms');
 
         try {
             res.json(formatAnime(data));
-        } catch (e) {
-            var error = 'Cannot format details of anime ' + id;
-            logger.error('animeHandler: ' + errorMessage.toLowerCase() + ': ' + e.stack);
-            res.status(500).json({error: error});
+        } catch (error) {
+            error.message = 'Cannot format details of anime ' + id;
+            next(error);
         }
 
     }, function (error) {
-        var errorMessage = 'Cannot retrieve details of anime ' + id + ': ' + error.statusMessage.toLowerCase();
-        logger.error('animeHandler: ' + errorMessage.toLowerCase());
-        res.status(500).json({error: errorMessage});
+        error.message = 'Cannot retrieve details of anime ' + id + ': ' + error.message.toLowerCase();
+        next(error);
     });
 }
 

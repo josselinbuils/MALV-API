@@ -67,24 +67,20 @@ function get(url, user, secureKey, retries) {
                         get(url, user, secureKey, retries - 1).then(function (body) {
                             resolve(body);
                         }, function (error) {
-                            reject({
-                                statusCode: error.statusCode,
-                                statusMessage: error.statusMessage
-                            });
+                            reject(error);
                         });
                     }, config.retryDelay);
 
                 } else {
-                    var statusMessage = response ? response.statusMessage : error.code;
 
-                    if (statusMessage === 'ETIMEDOUT') {
-                        statusMessage = 'connection timed out'
+                    error.message = response.statusMessage || error.code;
+                    error.status = response.statusCode || undefined;
+
+                    if (error.message === 'ETIMEDOUT') {
+                        error.message = 'connection timed out'
                     }
 
-                    reject({
-                        statusCode: response ? response.statusCode : null,
-                        statusMessage: statusMessage
-                    });
+                    reject(error);
                 }
             }
         });

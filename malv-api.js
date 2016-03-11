@@ -5,16 +5,19 @@
  */
 
 // External libraries
+var bodyParser = require('body-parser');
 var express = require('express');
 
 // Configuration
 var config = require('./config');
 
 // Handlers
-var animeHandler = require('./handlers/anime'),
-    animeListHandler = require('./handlers/animeList'),
-    topListHandler = require('./handlers/topList'),
-    verifyCredentialsHandler = require('./handlers/verifyCredentials');
+var animeHandler = require('./handlers/anime');
+var animeListHandler = require('./handlers/animeList');
+var errorHandler = require('./handlers/error');
+var topListHandler = require('./handlers/topList');
+var updateAnimeHandler = require('./handlers/updateAnime');
+var verifyCredentialsHandler = require('./handlers/verifyCredentials');
 
 // Services
 var logger = require('./services/logger');
@@ -24,9 +27,17 @@ var app = express();
 
 logger.log('MALV API is running');
 
+// Set the number of lines to show in error stacks
+Error.stackTraceLimit = config.stackTraceLimit;
+
+// Allow to receive request data
+app.use(bodyParser.json());
+
+// Set the app headers
 app.use(function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", config.originsAllowed);
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header('Access-Control-Allow-Origin', config.originsAllowed);
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    res.header('Content-Type', 'application/json');
     next();
 });
 
@@ -56,6 +67,16 @@ app.get('/animelist/:user', animeListHandler);
 app.get('/toplist/:name/:page', topListHandler);
 
 /**
+ * @name /updateanime/:user/:id/:secureKey
+ * @description Update an anime in a user anime list.
+ * @param {string} user User.
+ * @param {number} id Id of the anime.
+ * @param {string} secureKey Secure key of the user.
+ * @param {object} data JSON object containing the fields to update. Must be provided as request data.
+ */
+app.patch('/updateanime/:user/:id/:secureKey', updateAnimeHandler);
+
+/**
  * @name /verifycredentials/:user/:password
  * @description Verify credentials of a MyAnimeList account.
  * @param {string} user User.
@@ -64,4 +85,8 @@ app.get('/toplist/:name/:page', topListHandler);
  */
 app.get('/verifycredentials/:user/:password', verifyCredentialsHandler);
 
+// Handle errors
+app.use(errorHandler);
+
+// Run the API server
 app.listen(config.port);

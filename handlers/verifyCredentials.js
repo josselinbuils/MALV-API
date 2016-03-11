@@ -11,7 +11,9 @@ var crypt = require('../services/crypt');
 var logger = require('../services/logger');
 var myAnimeList = require('../services/myAnimeList');
 
-module.exports = function (req, res) {
+module.exports = verifyCredentialsHandler;
+
+function verifyCredentialsHandler(req, res) {
 
     var user = req.params.user;
     var secureKey = crypt.encrypt(req.params.password);
@@ -42,4 +44,4 @@ module.exports = function (req, res) {
             res.status(500).json({error: errorMessage});
         }
     });
-};
+}

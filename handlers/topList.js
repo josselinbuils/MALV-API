@@ -10,7 +10,9 @@
 var logger = require('../services/logger');
 var myAnimeList = require('../services/myAnimeList');
 
-module.exports = function (req, res) {
+module.exports = topListHandler;
+
+function topListHandler(req, res) {
 
     var name = req.params.name;
     var validNames = ['all', 'airing', 'bypopularity', 'movie', 'ova', 'special', 'tv', 'upcoming'];
@@ -47,7 +49,7 @@ module.exports = function (req, res) {
         logger.error('topListHandler: ' + errorMessage.toLowerCase());
         res.status(500).json({error: errorMessage});
     });
-};
+}
 
 /**
  * @name formatTopList

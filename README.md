@@ -19,13 +19,21 @@ Provide details on an anime that are not available in the animelist.
 #### Response
 
   JSON object containing the following fields:
+  - **endDate** *timestamp*
+  - **episodes** *timestamp*
   - **genres** *Array of string*
+  - **imageUrl** *string*
+  - **membersScore** *float*
   - **popularity** *integer*
   - **rank** *integer*
   - **rating** *string*
-  - **score** *float*
+  - **startDate** *timestamp*
+  - **status** *string*
   - **studios** *Array of string*
+  - **synonyms** *Array of string*
   - **synopsis** *string*
+  - **title** *string*
+  - **type** *string*
 
 #### Example
 
@@ -33,6 +41,8 @@ Provide details on an anime that are not available in the animelist.
 
 ```json
 {
+  "endDate": 924904800000,
+  "episodes": "26",
   "genres": [
     "Action",
     "Adventure",
@@ -41,14 +51,22 @@ Provide details on an anime that are not available in the animelist.
     "Sci-Fi",
     "Space"
   ],
+  "imageUrl": "http://cdn.myanimelist.net/images/anime/4/19644.jpg",
+  "membersScore": 8.83,
   "popularity": 29,
   "rank": 23,
   "rating": "R - 17+ (violence &amp; profanity)",
-  "score": 8.83,
+  "startDate": 891554400000,
+  "status": "Finished Airing",
   "studios": [
     "Sunrise"
   ],
-  "synopsis": "In the year 2071, humanity has colonized several of the planets [...]"
+  "synonyms": [
+    "Cowboy Bebop"
+  ],
+  "synopsis": "In the year 2071, humanity has colonized several of the planets [...]",
+  "title": "Cowboy Bebop",
+  "type": "TV"
 }
 ```
 
@@ -154,9 +172,9 @@ Provide a top list.
 
   Array of JSON objects containing the following fields:
   - **imageUrl** *string*
-  - **rank** *integer*
   - **score** *float*
   - **title** *string*
+  - **topRank** *integer*
 
 #### Example
 
@@ -166,15 +184,15 @@ Provide a top list.
 [
   {
     "imageUrl": "http://cdn.myanimelist.net/images/anime/5/47421.jpg",
-    "rank": 1,
     "score": 9.25,
-    "title": "Fullmetal Alchemist: Brotherhood"
+    "title": "Fullmetal Alchemist: Brotherhood",
+    "topRank": 1
   },
   {
     "imageUrl": "http://cdn.myanimelist.net/images/anime/5/73199.jpg",
-    "rank": 2,
     "score": 9.17,
-    "title": "Steins;Gate"
+    "title": "Steins;Gate",
+    "topRank": 2
   }
 ]
 ```

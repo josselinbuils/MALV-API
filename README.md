@@ -13,6 +13,10 @@ Here are the possible options:
 - **encryptionKey** *string* **Required**
   - **Description:** Key used to encrypt passwords.
 
+- **logging** *boolean*
+  - **Description:** If true, write the logs in a file named logs.txt located in the API root.
+  - **Default value:** true
+
 - **myAnimeList** *object* **Required** Configuration relative to MyAnimeList.
   - **apiKey** *string* **Required**
     - **Description:** Personal key that allows the API to be authorized to communicate with MyAnimeList.

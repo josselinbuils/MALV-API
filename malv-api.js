@@ -12,7 +12,20 @@ var express = require('express');
 var constants = require('./constants');
 
 // Configuration
+
 var config = require('./config');
+
+if (!config.encryptionKey) {
+    throw new Error('Missing the required parameter encryptionKey in the configuration');
+}
+
+if (!config.myAnimeList || typeof config.myAnimeList !== 'object') {
+    throw new Error('Missing the required parameter myAnimeList in the configuration');
+}
+
+if (!config.myAnimeList.apiKey) {
+    throw new Error('Missing the required parameter apiKey in the configuration');
+}
 
 // Handlers
 var animeHandler = require('./handlers/anime');

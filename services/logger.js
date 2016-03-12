@@ -34,5 +34,8 @@ function info(str) {
 function log(level, str) {
     str = '[' + new Date().toDateString() + ' ' + new Date().toLocaleTimeString() + '] [' + level + '] ' + str;
     console.log(str);
-    fs.appendFile('logs.txt', str + '\n');
+
+    if (config.logging !== false) {
+        fs.appendFile('logs.txt', str + '\n');
+    }
 }

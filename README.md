@@ -4,6 +4,7 @@ Node.js REST API that allows to interact with MyAnimeList.
 ## Configuration
 A JSON file named config.json located at the API root is used to configure it.
 
+### Options
 Here are the possible options:
 - **encryptionAlgorithm** *string*
   - **Description:** OpenSSL algorithm used to encrypt the passwords.
@@ -13,7 +14,7 @@ Here are the possible options:
   - **Description:** Key used to encrypt passwords.
 
 - **myAnimeList** *object* **Required** Configuration relative to MyAnimeList.
-  - **myAnimeListApiKey** *string* **Required**
+  - **apiKey** *string* **Required**
     - **Description:** Personal key that allows the API to be authorized to communicate with MyAnimeList.
 
   - **maxSockets** {integer}
@@ -43,6 +44,20 @@ Here are the possible options:
 - **stackTraceLimit** {integer}
   - **Description:** Number of lines to display in the stack when an error occurs.
   - **Default value:** 5
+
+### Example
+
+```json
+{
+  "encryptionKey": "snorlax",
+  "myAnimeList": {
+    "apiKey": "pikachu",
+    "timeout": 5000
+  },
+  "port": 9000,
+  "stackTraceLimit": 10
+}
+```
 
 ## Requests
 

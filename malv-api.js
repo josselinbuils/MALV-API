@@ -8,6 +8,9 @@
 var bodyParser = require('body-parser');
 var express = require('express');
 
+// Constants
+var constants = require('./constants');
+
 // Configuration
 var config = require('./config');
 
@@ -27,15 +30,12 @@ var app = express();
 
 logger.log('MALV API is running');
 
-// Set the number of lines to show in error stacks
-Error.stackTraceLimit = config.stackTraceLimit;
-
 // Allow to receive request data
 app.use(bodyParser.json());
 
 // Set the app headers
 app.use(function (req, res, next) {
-    res.header('Access-Control-Allow-Origin', config.originsAllowed);
+    res.header('Access-Control-Allow-Origin', config.originsAllowed || constants.DEFAULT_ORIGINS_ALLOWED);
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     res.header('Content-Type', 'application/json');
     next();
@@ -89,4 +89,4 @@ app.get('/verifycredentials/:user/:password', verifyCredentialsHandler);
 app.use(errorHandler);
 
 // Run the API server
-app.listen(config.port);
+app.listen(config.port || constants.DEFAULT_PORT);

@@ -56,15 +56,14 @@ function formatAnime(data) {
         synonyms = synonyms.concat(match[2].split(', '));
     }
 
-    // Get start and end timestamps
+    // Get start timestamp
 
     var aired = data.match(/<span[^>]*>Aired:<\/span>\s*(.*)/)[1];
     var startDate = Date.parse(aired.match(/(((?! to)[^?])*)/)[1]) || null;
-    var endDate = aired.indexOf(' to ') !== -1 ? (Date.parse(aired.match(/to ([^?]*)/)[1]) || null) : startDate;
 
     // Fill the anime object
 
-    anime.endDate = endDate;
+    anime.endDate = aired.indexOf(' to ') !== -1 ? (Date.parse(aired.match(/to ([^?]*)/)[1]) || null) : startDate;
     anime.episodes = data.match(/<span[^>]*>Episodes:<\/span>\s*(\d*)/)[1];
     anime.genres = data.match(/<span[^>]*>Genres:<\/span>\s*((<a[^>]*[^<]*<\/a>(, )?)*)\s*<\/div>/)[1].replace(/<[^>]*>/g, '').split(', ');
     anime.imageUrl = data.match(/<img src="([^"]*)"[^>]*itemprop="image">/)[1];

@@ -1,43 +1,88 @@
 # MALV-API
 Node.js REST API that allows to interact with MyAnimeList.
 
-## Anime
+## Configuration
+A JSON file named config.json located at the API root is used to configure it.
+
+Here are the possible options:
+- **encryptionAlgorithm** *string*
+  - **Description:** OpenSSL algorithm used to encrypt the passwords.
+  - **Default value:** aes256
+
+- **encryptionKey** *string* **Required**
+  - **Description:** Key used to encrypt passwords.
+
+- **myAnimeList** *object* **Required** Configuration relative to MyAnimeList.
+  - **myAnimeListApiKey** *string* **Required**
+    - **Description:** Personal key that allows the API to be authorized to communicate with MyAnimeList.
+
+  - **maxSockets** {integer}
+    - **Description:** Max number of requests simultaneous sent to MyAnimeList.
+    - **Default value:** 3
+
+  - **retries** {integer}
+    - **Description:** Number of retries to make when MyAnimeList returns a *Too Many Requests* error.
+    - **Default value:** 3
+
+  - **retryDelay** {integer}
+    - **Description:** Delay between 2 retries in milliseconds.
+    - **Default value:** 500
+
+  - **timeout** {integer}
+    - **Description:** Timeout in milliseconds for MyAnimeList requests.
+    - **Default value:** 10000
+
+- **originsAllowed** {string}
+  - **Description:** Hosts authorized to communicate with the API. Should be defined.
+  - **Default value:** *
+
+- **port** {integer}
+  - **Description:** Port used to run the API.
+  - **Default value:** 8080
+
+- **stackTraceLimit** {integer}
+  - **Description:** Number of lines to display in the stack when an error occurs.
+  - **Default value:** 5
+
+## Requests
+
+### Anime
 Provide details on an anime that are not available in the animelist.
 
 #### URL
 
-  `/anime/:id`
+`/anime/:id`
 
 #### Method
 
-  `GET`
+`GET`
 
 #### URL params
 
-   - **id** *integer*
+- **id** *integer*
 
 #### Response
 
-  JSON object containing the following fields:
-  - **endDate** *timestamp*
-  - **episodes** *timestamp*
-  - **genres** *Array of string*
-  - **imageUrl** *string*
-  - **membersScore** *float*
-  - **popularity** *integer*
-  - **rank** *integer*
-  - **rating** *string*
-  - **startDate** *timestamp*
-  - **status** *string*
-  - **studios** *Array of string*
-  - **synonyms** *Array of string*
-  - **synopsis** *string*
-  - **title** *string*
-  - **type** *string*
+JSON object containing the following fields:
+- **endDate** *timestamp*
+- **episodes** *timestamp*
+- **genres** *Array of string*
+- **imageUrl** *string*
+- **membersScore** *float*
+- **popularity** *integer*
+- **rank** *integer*
+- **rating** *string*
+- **startDate** *timestamp*
+- **status** *string*
+- **studios** *Array of string*
+- **synonyms** *Array of string*
+- **synopsis** *string*
+- **title** *string*
+- **type** *string*
 
 #### Example
 
-  `/anime/1`
+`/anime/1`
 
 ```json
 {
@@ -70,16 +115,16 @@ Provide details on an anime that are not available in the animelist.
 }
 ```
 
-## Anime list
+### Anime list
 Provide the anime list of a user.
 
 #### URL
 
-  `/animelist/:user`
+`/animelist/:user`
 
 #### Method
 
-  `GET`
+`GET`
 
 #### URL params
 
@@ -87,25 +132,25 @@ Provide the anime list of a user.
 
 #### Response
 
-  Array of JSON objects containing the following fields:
-  - **endDate** *timestamp*
-  - **episodes** *integer*
-  - **id** *integer*
-  - **imageUrl** *string*
-  - **myFinishDate** *timestamp*
-  - **myScore** *integer*
-  - **myStartDate** *timestamp*
-  - **myStatus** *string*
-  - **myWatchedEpisodes** *integer*
-  - **startDate** *timestamp*
-  - **status** *string*
-  - **synonyms** *Array of string*
-  - **title** *string*
-  - **type** *string*
+Array of JSON objects containing the following fields:
+- **endDate** *timestamp*
+- **episodes** *integer*
+- **id** *integer*
+- **imageUrl** *string*
+- **myFinishDate** *timestamp*
+- **myScore** *integer*
+- **myStartDate** *timestamp*
+- **myStatus** *string*
+- **myWatchedEpisodes** *integer*
+- **startDate** *timestamp*
+- **status** *string*
+- **synonyms** *Array of string*
+- **title** *string*
+- **type** *string*
 
 #### Example
 
-  `/animelist/youbi325`
+`/animelist/youbi325`
 
 ```json
 [
@@ -144,41 +189,41 @@ Provide the anime list of a user.
 ]
 ```
 
-## Top list
+### Top list
 Provide a top list.
 
 #### URL
 
-  `/toplist/:name/:page`
+`/toplist/:name/:page`
 
 #### Method
 
-  `GET`
+`GET`
 
 #### URL params
 
-   - **name** *string*
-     - all
-     - airing
-     - bypopularity
-     - movie
-     - ova
-     - special
-     - tv
-     - upcoming
-   - **page** *integer*
+- **name** *string*
+ - all
+ - airing
+ - bypopularity
+ - movie
+ - ova
+ - special
+ - tv
+ - upcoming
+- **page** *integer*
 
 #### Response
 
-  Array of JSON objects containing the following fields:
-  - **imageUrl** *string*
-  - **score** *float*
-  - **title** *string*
-  - **topRank** *integer*
+Array of JSON objects containing the following fields:
+- **imageUrl** *string*
+- **score** *float*
+- **title** *string*
+- **topRank** *integer*
 
 #### Example
 
-  `/toplist/all/1`
+`/toplist/all/1`
 
 ```json
 [
@@ -197,33 +242,33 @@ Provide a top list.
 ]
 ```
 
-## Verify credentials
+### Verify credentials
 Verify credentials of a MyAnimeList account.
 
 #### URL
 
-  `/verifycredentials/:user/:password`
+`/verifycredentials/:user/:password`
 
 #### Method
 
-  `GET`
+`GET`
 
 #### URL params
 
-   - **user** *string*
-   - **password** *password*
+- **user** *string*
+- **password** *password*
 
 #### Response
 
-  JSON object containing the following fields:
-  - **authenticated** *boolean*
-  - **secureKey** *string* Only if authenticated is true.
+JSON object containing the following fields:
+- **authenticated** *boolean*
+- **secureKey** *string* Only if authenticated is true.
 
 #### Examples
 
 ##### Success
 
-  `/verifycredentials/youbi325/rightpassword`
+`/verifycredentials/youbi325/rightpassword`
 
 ```json
 {
@@ -234,7 +279,7 @@ Verify credentials of a MyAnimeList account.
 
 ##### Fail
 
-  `/verifycredentials/youbi325/wrongpassword`
+`/verifycredentials/youbi325/wrongpassword`
 
 ```json
 {

@@ -7,6 +7,9 @@
 // External libraries
 var crypto = require('crypto');
 
+// Constants
+var constants = require('../constants');
+
 // Configuration
 var config = require('../config');
 
@@ -26,12 +29,14 @@ module.exports = {
     decrypt: decrypt
 };
 
+var algorithm = config.encryptionAlgorithm || constants.DEFAULT_ENCRYPTION_ALGORITHM;
+
 function encrypt(str) {
-    var cipher = crypto.createCipher(config.encryptionAlgorithm, config.encryptionKey);
+    var cipher = crypto.createCipher(algorithm, config.encryptionKey);
     return cipher.update(str, 'utf8', 'hex') + cipher.final('hex');
 }
 
 function decrypt(str) {
-    var decipher = crypto.createDecipher(config.encryptionAlgorithm, config.encryptionKey);
+    var decipher = crypto.createDecipher(algorithm, config.encryptionKey);
     return decipher.update(str, 'hex', 'utf8') + decipher.final('utf8');
 }

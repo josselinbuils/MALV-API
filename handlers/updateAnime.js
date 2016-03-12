@@ -7,6 +7,9 @@
 // External libraries
 var xml2js = require('xml2js');
 
+// Constants
+var constants = require('../constants');
+
 // Configuration
 var config = require('../config');
 
@@ -17,24 +20,25 @@ var myAnimeList = require('../services/myAnimeList');
 module.exports = updateAnimeHandler;
 
 function updateAnimeHandler(req, res, next) {
+    var error;
 
     if (!req.is('application/json')) {
-        var error = new Error('The content-type must be application/json');
-        error.status = 406;
+        error = new Error('Content-type must be application/json');
+        error.status = constants.NOT_ACCEPTABLE;
         return next(error);
     }
 
-    console.log(req.body);
+    if (typeof req.body !== 'object') {
+        error = new Error('Request body must be a JSON object');
+        error.status = constants.BAD_REQUEST;
+        return next(error);
+    }
 
-    var xmlOptions = {
-        rootName: 'entry',
-        renderOpts: {
-            pretty: false
-        }
-    };
-
-    console.log(new xml2js.Builder(xmlOptions).buildObject({
-        test: 'kikou'
+    console.log(new xml2js.Builder(constants.XML_BUILDER_OPTIONS).buildObject({
+        date_finish: req.body.myFinishDate,
+        date_start: req.body.myStartDate,
+        episodes: req.body.myWatchedEpisodes,
+        score: req.body.myScore
     }));
 
     res.status(200).end();

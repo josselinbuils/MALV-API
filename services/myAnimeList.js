@@ -8,6 +8,9 @@
 var Promise = require('promise');
 var request = require('request');
 
+// Constants
+var constants = require('../constants');
+
 // Configuration
 var config = require('../config');
 
@@ -18,20 +21,31 @@ var logger = require('../services/logger');
 module.exports = {
     /**
      * @name get
-     * @description Make an http get request.
+     * @description Make a HTTP GET request.
      * @param {string} url Url to get.
      * @param {string} user Username to use for authentication.
      * @param {string} url Secure key to use for authentication.
      * @returns {string} Data got.
      */
-    get: get
+    get: get,
+
+    /**
+     * @name get
+     * @description Make a HTTP POST request.
+     * @param {string} url Url to get.
+     * @param {string} xmlData XML data to send.
+     * @param {string} user Username to use for authentication.
+     * @param {string} url Secure key to use for authentication.
+     * @returns {string} Data got.
+     */
+    post: post
 };
 
 var http = request.defaults({
     pool: {
-        maxSockets: config.maxSockets
+        maxSockets: config.myAnimeList.maxSockets || constants.DEFAULT_MY_ANIME_LIST_MAX_SOCKETS
     },
-    timeout: config.requestTimeout
+    timeout: config.myAnimeList.timeout || constants.DEFAULT_MY_ANIME_LIST_TIMEOUT
 });
 
 function get(url, user, secureKey, retries) {
@@ -39,7 +53,7 @@ function get(url, user, secureKey, retries) {
     return new Promise(function (resolve, reject) {
 
         var headers = {
-            'User-Agent': config.myAnimeListApiKey
+            'User-Agent': config.myAnimeList.apiKey
         };
 
         if (user && secureKey) {
@@ -47,7 +61,7 @@ function get(url, user, secureKey, retries) {
         }
 
         http({
-            url: config.myAnimeListHost + url,
+            url: constants.MY_ANIME_LIST_HOST + url,
             headers: headers
         }, function (error, response, body) {
 
@@ -56,12 +70,13 @@ function get(url, user, secureKey, retries) {
             } else {
 
                 if (retries === undefined) {
-                    retries = config.retries;
+                    retries = config.retries || constants.DEFAULT_MY_ANIME_LIST_RETRIES;
                 }
 
                 if (response && response.statusMessage === 'Too Many Requests' && retries > 0) {
+                    var retryDelay = config.myAnimeList.retryDelay || constants.DEFAULT_MY_ANIME_LIST_RETRY_DELAY;
 
-                    logger.error('myAnimeList: too many requests, retry #' + (config.retries - retries + 1) + ' in ' + config.retryDelay + 'ms');
+                    logger.error('myAnimeList: too many requests, retry #' + (config.retries - retries + 1) + ' in ' + retryDelay + 'ms');
 
                     setTimeout(function () {
                         get(url, user, secureKey, retries - 1).then(function (body) {
@@ -69,7 +84,7 @@ function get(url, user, secureKey, retries) {
                         }, function (error) {
                             reject(error);
                         });
-                    }, config.retryDelay);
+                    }, retryDelay);
 
                 } else {
 

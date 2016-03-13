@@ -337,7 +337,7 @@ Add an anime in a user anime list.
 
 #### Data params
 
-JSON object that can contain the following field:
+JSON object that must contain the following field:
 - **myStatus** *string* **Required**
   - completed
   - dropped

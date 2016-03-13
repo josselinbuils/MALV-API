@@ -17,10 +17,7 @@ Here are the possible options:
   - **Description:** If true, write the logs in a file named logs.txt located in the API root.
   - **Default value:** true
 
-- **myAnimeList** *object* **Required** Configuration relative to MyAnimeList.
-  - **apiKey** *string* **Required**
-    - **Description:** Personal key that allows the API to be authorized to communicate with MyAnimeList.
-
+- **myAnimeList** *object* Configuration relative to MyAnimeList.
   - **maxSockets** {integer}
     - **Description:** Max number of requests simultaneous sent to MyAnimeList.
     - **Default value:** 3
@@ -53,9 +50,8 @@ Here are the possible options:
 
 ```json
 {
-  "encryptionKey": "snorlax",
+  "encryptionKey": "Snorlax",
   "myAnimeList": {
-    "apiKey": "pikachu",
     "timeout": 5000
   },
   "port": 9000,
@@ -63,7 +59,7 @@ Here are the possible options:
 }
 ```
 
-## Requests
+## Get anime lists and details
 
 ### Anime
 Provide details on an anime that are not available in the animelist.
@@ -160,12 +156,26 @@ Array of JSON objects containing the following fields:
 - **myScore** *integer*
 - **myStartDate** *timestamp*
 - **myStatus** *string*
+  - completed
+  - dropped
+  - onHold
+  - planToWatch
+  - watching
 - **myWatchedEpisodes** *integer*
 - **startDate** *timestamp*
 - **status** *string*
+  - Currently Airing
+  - Finished Airing
+  - Not yet aired
 - **synonyms** *Array of string*
 - **title** *string*
 - **type** *string*
+  - Movie
+  - Music
+  - ONA
+  - OVA
+  - Special
+  - TV
 
 #### Example
 
@@ -222,14 +232,14 @@ Provide a top list.
 #### URL params
 
 - **name** *string*
- - all
- - airing
- - bypopularity
- - movie
- - ova
- - special
- - tv
- - upcoming
+  - all
+  - airing
+  - bypopularity
+  - movie
+  - ova
+  - special
+  - tv
+  - upcoming
 - **page** *integer*
 
 #### Response
@@ -275,7 +285,7 @@ Verify credentials of a MyAnimeList account.
 #### URL params
 
 - **user** *string*
-- **password** *password*
+- **password** *string*
 
 #### Response
 
@@ -305,3 +315,55 @@ JSON object containing the following fields:
   "authenticated": false
 }
 ```
+
+## Update user anime list
+
+### Update anime
+Update an anime in a user anime list.
+
+#### URL
+
+`/updateanime/:user/:id/:secureKey`
+
+#### Method
+
+`PATCH`
+
+#### URL params
+
+- **user** *string*
+- **id** *integer*
+- **secureKey** *string* (See Verify credentials)
+
+#### Data params
+
+JSON object that can contain the following fields:
+- **myFinishDate** *timestamp*
+- **myScore** *integer*
+- **myStartDate** *timestamp*
+- **myStatus** *string*
+  - completed
+  - dropped
+  - onHold
+  - planToWatch
+  - watching
+- **myWatchedEpisodes** *integer*
+
+All these fields are optionals. If a field is not provided, its value will not change.
+
+#### Response
+
+`HTTP 200`
+
+#### Example
+
+`/updateanime/youbi325/1/Hiuuh679Ygugbuv`
+
+```json
+{
+  "myScore": 8,
+  "myWatchedEpisodes": 700
+}
+```
+
+`HTTP 200`

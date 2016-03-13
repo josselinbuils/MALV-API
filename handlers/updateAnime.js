@@ -7,9 +7,6 @@
 // Constants
 var constants = require('../constants');
 
-// Configuration
-var config = require('../config');
-
 // Services
 var logger = require('../services/logger');
 var myAnimeList = require('../services/myAnimeList');

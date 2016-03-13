@@ -7,6 +7,7 @@
 // Services
 var logger = require('../services/logger');
 var myAnimeList = require('../services/myAnimeList');
+var utils = require('../services/utils');
 
 module.exports = topListHandler;
 
@@ -58,12 +59,11 @@ function formatTopList(data) {
         var anime = {};
         var animeData = match[0];
 
-        var score = animeData.match(/<td class="score[^>]*>.*<span[^>]*>((\d||\.)*)/);
-
-        anime.imageUrl = animeData.match(/<img[^>]*src="([^"]*)t.jpg"/)[1] + '.jpg';
-        anime.topRank = parseInt(animeData.match(/<span[^>]*top-anime-rank[^>]*>(\d*)/)[1]);
-        anime.membersScore = score[1] ? parseFloat(score[1]) : null;
-        anime.title = animeData.match(/<a class="hoverinfo_trigger[^>]*>([^<]*)<\/a>/)[1];
+        anime.id = utils.getMatchGroup(animeData.match(/rel="#info([^"]*)/), 1, 'int');
+        anime.imageUrl = utils.getMatchGroup(animeData.match(/<img[^>]*src="([^"]*)t.jpg"/), 1, 'string') + '.jpg';
+        anime.topRank = utils.getMatchGroup(animeData.match(/<span[^>]*top-anime-rank[^>]*>(\d*)/), 1, 'int');
+        anime.membersScore = utils.getMatchGroup(animeData.match(/<td class="score[^>]*>.*<span[^>]*>((\d||\.)*)/), 1, 'float');
+        anime.title = utils.getMatchGroup(animeData.match(/<a class="hoverinfo_trigger[^>]*>([^<]*)<\/a>/), 1, 'string');
 
         animes.push(anime);
     }

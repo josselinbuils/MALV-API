@@ -32,6 +32,14 @@ function updateAnimeHandler(req, res, next) {
         return next(error);
     }
 
+    var myStatus = {
+        watching: 1,
+        completed: 2,
+        onHold: 3,
+        dropped: 4,
+        planToWatch: 6
+    };
+
     var id = req.params.id;
     var user = req.params.user;
     var secureKey = req.params.secureKey;
@@ -56,6 +64,10 @@ function updateAnimeHandler(req, res, next) {
 
     if (req.body.myScore) {
         xml += '<score>' + req.body.myScore + '</score>';
+    }
+
+    if (req.body.myStatus) {
+        xml += '<status>' + myStatus[req.body.myStatus] + '</status>';
     }
 
     xml += '</entry>';

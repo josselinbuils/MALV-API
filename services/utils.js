@@ -5,6 +5,7 @@
  */
 
 module.exports = {
+
     /**
      * @name getMatchGroup
      * @description Allow to safety get a group of a regex match.
@@ -13,7 +14,15 @@ module.exports = {
      * @param {string} type Type of data to return: 'date', 'int', 'float' or 'string'.
      * @returns {string} Wanted group if its exists or empty string or null regarding the wanted type.
      */
-    getMatchGroup: getMatchGroup
+    getMatchGroup: getMatchGroup,
+
+    /**
+     * @name timeToString
+     * @description Convert a timestamp to a date string with format mmddyyyy.
+     * @param {number} timestamp Timestamp.
+     * @returns {string} Formatted date.
+     */
+    timeToString: timeToString
 };
 
 function getMatchGroup(match, index, type) {
@@ -43,4 +52,9 @@ function getMatchGroup(match, index, type) {
     }
 
     return group;
+}
+
+function timeToString(timestamp) {
+    var isoDate = new Date(timestamp).toISOString().match(/(\d{4})-(\d{2})-(\d{2})/);
+    return isoDate[2] + isoDate[3] + isoDate[1];
 }

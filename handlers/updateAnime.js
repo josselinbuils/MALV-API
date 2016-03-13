@@ -13,6 +13,7 @@ var config = require('../config');
 // Services
 var logger = require('../services/logger');
 var myAnimeList = require('../services/myAnimeList');
+var utils = require('../services/utils');
 
 module.exports = updateAnimeHandler;
 
@@ -51,11 +52,11 @@ function updateAnimeHandler(req, res, next) {
     var xml = '<?xml version="1.0" encoding="UTF-8"?><entry>';
 
     if (req.body.myFinishDate) {
-        xml += '<date_finish>' + req.body.myFinishDate + '</date_finish>';
+        xml += '<date_finish>' + utils.timeToString(req.body.myFinishDate) + '</date_finish>';
     }
 
     if (req.body.myStartDate) {
-        xml += '<date_start>' + req.body.myStartDate + '</date_start>';
+        xml += '<date_start>' + utils.timeToString(req.body.myStartDate) + '</date_start>';
     }
 
     if (req.body.myWatchedEpisodes) {

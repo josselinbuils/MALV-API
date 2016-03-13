@@ -302,7 +302,7 @@ JSON object containing the following fields:
 ```json
 {
   "authenticated": true,
-  "secureKey": "7gu9vgv5gu76hyih7hgi7jhb7"
+  "secureKey": "Hiuuh679Ygugbuv"
 }
 ```
 
@@ -317,6 +317,49 @@ JSON object containing the following fields:
 ```
 
 ## Update user anime list
+
+### Add anime
+Add an anime in a user anime list.
+
+#### URL
+
+`/addanime/:user/:id/:secureKey`
+
+#### Method
+
+`PUT`
+
+#### URL params
+
+- **user** *string*
+- **id** *integer*
+- **secureKey** *string* (See Verify credentials)
+
+#### Data params
+
+JSON object that can contain the following field:
+- **myStatus** *string* **Required**
+  - completed
+  - dropped
+  - onHold
+  - planToWatch
+  - watching
+
+#### Response
+
+`HTTP 200`
+
+#### Example
+
+`/addanime/youbi325/1/Hiuuh679Ygugbuv`
+
+```json
+{
+  "myStatus": "watching"
+}
+```
+
+`HTTP 200`
 
 ### Update anime
 Update an anime in a user anime list.

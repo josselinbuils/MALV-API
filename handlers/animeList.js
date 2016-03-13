@@ -53,9 +53,9 @@ function formatAnimeList(data) {
     var myStatus = {
         1: 'watching',
         2: 'completed',
-        3: 'onhold',
+        3: 'onHold',
         4: 'dropped',
-        6: 'plantowatch'
+        6: 'planToWatch'
     };
 
     var status = {

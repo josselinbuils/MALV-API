@@ -5,8 +5,9 @@
  */
 
 // External libraries
+var http = require('http');
 var Promise = require('promise');
-var request = require('request');
+var querystring = require('querystring');
 
 // Constants
 var constants = require('../constants');
@@ -35,51 +36,79 @@ module.exports = {
      * @param {string} url Url to get.
      * @param {string} xmlData XML data to send.
      * @param {string} user Username to use for authentication.
-     * @param {string} url Secure key to use for authentication.
+     * @param {string} secureKey Secure key to use for authentication.
      * @returns {string} Data got.
      */
     post: post
 };
 
-var http = request.defaults({
-    pool: {
-        maxSockets: config.myAnimeList.maxSockets || constants.DEFAULT_MY_ANIME_LIST_MAX_SOCKETS
-    },
-    timeout: config.myAnimeList.timeout || constants.DEFAULT_MY_ANIME_LIST_TIMEOUT
+var agent = new http.Agent({
+    maxSockets: config.myAnimeList.maxSockets || constants.DEFAULT_MY_ANIME_LIST_MAX_SOCKETS
 });
 
-function get(url, user, secureKey, retries) {
+function get(url, user, secureKey) {
+    return request(url, 'GET', null, user, secureKey);
+}
+
+function post(url, data, user, secureKey) {
+    return request(url, 'POST', data, user, secureKey);
+}
+
+function request(url, method, data, user, secureKey, retries) {
 
     return new Promise(function (resolve, reject) {
 
-        var headers = {
-            'User-Agent': config.myAnimeList.apiKey
+        var reqConfig = {
+            hostname: constants.MY_ANIME_LIST_HOSTNAME,
+            path: url,
+            method: method,
+            agent: agent
         };
 
-        if (user && secureKey) {
-            headers.Authorization = 'Basic ' + new Buffer(user + ':' + crypt.decrypt(secureKey)).toString('base64');
+        if (method === 'POST') {
+
+            data = querystring.stringify({
+                data: data
+            });
+
+            reqConfig.headers = {
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                'Content-Length': Buffer.byteLength(data)
+            };
         }
 
-        http({
-            url: constants.MY_ANIME_LIST_HOST + url,
-            headers: headers
-        }, function (error, response, body) {
+        if (user && secureKey) {
+            reqConfig.auth = user + ':' + crypt.decrypt(secureKey);
+        }
 
-            if (!error && response.statusCode == 200) {
-                resolve(body);
+        var req = http.request(reqConfig, function (res) {
+            var body = '';
+
+            if (res.statusCode === constants.HTTP_OK) {
+                res.setEncoding('utf8');
+
+                res.on('data', function (data) {
+                    body += data;
+                });
+
+                res.on('end', function () {
+                    resolve(body);
+                });
+
             } else {
 
                 if (retries === undefined) {
                     retries = config.retries || constants.DEFAULT_MY_ANIME_LIST_RETRIES;
                 }
 
-                if (response && response.statusMessage === 'Too Many Requests' && retries > 0) {
+                if (res.statusCode === constants.HTTP_TOO_MANY_REQUESTS && retries > 0) {
+
                     var retryDelay = config.myAnimeList.retryDelay || constants.DEFAULT_MY_ANIME_LIST_RETRY_DELAY;
 
                     logger.error('myAnimeList: too many requests, retry #' + (config.retries - retries + 1) + ' in ' + retryDelay + 'ms');
 
                     setTimeout(function () {
-                        get(url, user, secureKey, retries - 1).then(function (body) {
+                        request(url, method, data, user, secureKey, retries - 1).then(function (body) {
                             resolve(body);
                         }, function (error) {
                             reject(error);
@@ -87,17 +116,28 @@ function get(url, user, secureKey, retries) {
                     }, retryDelay);
 
                 } else {
-
-                    error.message = response.statusMessage || error.code;
-                    error.status = response.statusCode || undefined;
-
-                    if (error.message === 'ETIMEDOUT') {
-                        error.message = 'connection timed out'
-                    }
-
+                    var error = new Error(res.statusMessage);
+                    error.status = res.statusCode;
                     reject(error);
                 }
             }
         });
+
+        req.on('error', function (error) {
+            error.message = error.code;
+
+            if (error.message === 'ETIMEDOUT') {
+                error.message = 'connection timed out'
+            }
+
+            reject(error);
+        });
+
+        if (method === 'POST') {
+            req.write(data);
+        }
+
+        req.setTimeout(config.myAnimeList.timeout || constants.DEFAULT_MY_ANIME_LIST_TIMEOUT);
+        req.end();
     });
 }

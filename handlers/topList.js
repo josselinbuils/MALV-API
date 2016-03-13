@@ -32,7 +32,7 @@ function topListHandler(req, res, next) {
         try {
             res.json(formatTopList(data));
         } catch (error) {
-            error.message = 'Cannot format the page ' + page + ' of top ' + name;
+            error.message = 'Cannot format the page ' + page + ' of top ' + name + ': ' + error.message.toLowerCase();
             next(error);
         }
 

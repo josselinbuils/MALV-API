@@ -48,8 +48,9 @@ app.use(bodyParser.json());
 
 // Set the app headers
 app.use(function (req, res, next) {
-    res.header('Access-Control-Allow-Origin', config.originsAllowed || constants.DEFAULT_ORIGINS_ALLOWED);
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    res.header('Access-Control-Allow-Origin', config.originsAllowed || constants.DEFAULT_ORIGINS_ALLOWED);
+    res.header('Access-Control-Allow-Methods', 'DELETE, GET, PATCH, POST, OPTIONS');
     res.header('Content-Type', 'application/json');
     next();
 });

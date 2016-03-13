@@ -4,9 +4,6 @@
  * @author Josselin Buils <josselin.buils@gmail.com>
  */
 
-// External libraries
-var xml2js = require('xml2js');
-
 // Constants
 var constants = require('../constants');
 
@@ -20,26 +17,60 @@ var myAnimeList = require('../services/myAnimeList');
 module.exports = updateAnimeHandler;
 
 function updateAnimeHandler(req, res, next) {
+
     var error;
 
     if (!req.is('application/json')) {
         error = new Error('Content-type must be application/json');
-        error.status = constants.NOT_ACCEPTABLE;
+        error.status = constants.HTTP_NOT_ACCEPTABLE;
         return next(error);
     }
 
     if (typeof req.body !== 'object') {
         error = new Error('Request body must be a JSON object');
-        error.status = constants.BAD_REQUEST;
+        error.status = constants.HTTP_BAD_REQUEST;
         return next(error);
     }
 
-    console.log(new xml2js.Builder(constants.XML_BUILDER_OPTIONS).buildObject({
-        date_finish: req.body.myFinishDate,
-        date_start: req.body.myStartDate,
-        episodes: req.body.myWatchedEpisodes,
-        score: req.body.myScore
-    }));
+    var id = req.params.id;
+    var user = req.params.user;
+    var secureKey = req.params.secureKey;
+    var time = new Date().getTime();
+    var url = '/api/animelist/update/' + req.params.id + '.xml';
 
-    res.status(200).end();
+    logger.log('updateAnimeHandler: update anime ' + id + ' of user ' + user);
+
+    var xml = '<?xml version="1.0" encoding="UTF-8"?><entry>';
+
+    if (req.body.myFinishDate) {
+        xml += '<date_finish>' + req.body.myFinishDate + '</date_finish>';
+    }
+
+    if (req.body.myStartDate) {
+        xml += '<date_start>' + req.body.myStartDate + '</date_start>';
+    }
+
+    if (req.body.myWatchedEpisodes) {
+        xml += '<episode>' + req.body.myWatchedEpisodes + '</episode>';
+    }
+
+    if (req.body.myScore) {
+        xml += '<score>' + req.body.myScore + '</score>';
+    }
+
+    xml += '</entry>';
+
+    myAnimeList.post(url, xml, user, secureKey).then(function (data) {
+
+        if (data === 'Updated') {
+            logger.log('updateAnimeHandler: anime ' + id + ' of user ' + user + ' updated in ' + (new Date().getTime() - time) + 'ms');
+            res.status(200).end();
+        } else {
+            next(new Error('MyAnimeList error: ' + data));
+        }
+
+    }, function (error) {
+        error.message = 'Cannot update anime ' + id + ' of user ' + user + ': ' + error.message.toLowerCase();
+        next(error);
+    });
 }

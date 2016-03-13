@@ -6,7 +6,6 @@
     "crypto": "0.0.3",
     "express": "^4.13.4",
     "promise": "^7.1.1",
-    "request": "^2.69.0",
-    "xml2js": "^0.4.16"
+    "querystring": "^0.2.0"
   }
 }

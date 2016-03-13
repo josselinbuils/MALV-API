@@ -7,6 +7,9 @@
 // External libraries
 var fs = require('fs');
 
+// Configuration
+var config = require('../config');
+
 module.exports = {
     /**
      * @name error

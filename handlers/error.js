@@ -22,7 +22,7 @@ function errorHandler(error, req, res, next) {
 
     logger.error(error.stack);
 
-    res.status(error.status || constants.INTERNAL_ERROR).json({
+    res.status(error.status || constants.HTTP_INTERNAL_ERROR).json({
         error: error.message
     });
 

@@ -4,16 +4,13 @@
  * @author Josselin Buils <josselin.buils@gmail.com>
  */
 
-// External libraries
-var Promise = require('promise');
-var xml2js = require('xml2js');
-
 // Configuration
 var config = require('../config');
 
 // Services
 var logger = require('../services/logger');
 var myAnimeList = require('../services/myAnimeList');
+var utils = require('../services/utils');
 
 module.exports = animeListHandler;
 
@@ -29,15 +26,14 @@ function animeListHandler(req, res, next) {
 
         logger.log('animeListHandler: anime list of user ' + user + ' got in ' + (new Date().getTime() - time) + 'ms');
 
+        time = new Date().getTime();
+
         try {
-            formatAnimeList(data).then(function (animeList) {
-                res.json(animeList);
-            }, function (error) {
-                error.message = 'Cannot format the animelist of user ' + user + ': ' + error.message.toLowerCase();
-                next(error);
-            });
+            var animeList = formatAnimeList(data);
+            logger.log('animeListHandler: anime list of user ' + user + ' formatted in ' + (new Date().getTime() - time) + 'ms');
+            res.json(animeList);
         } catch (error) {
-            error.message = 'Cannot format the animelist of user ' + user;
+            error.message = 'Cannot format the animelist of user ' + user + ': ' + error.message.toLowerCase();
             next(error);
         }
 
@@ -77,56 +73,41 @@ function formatAnimeList(data) {
         6: 'Music'
     };
 
-    return new Promise(function (resolve, reject) {
-        xml2js.parseString(data, function (error, res) {
+    var animeList = [];
 
-            if (error) {
-                reject(new Error('Error during xml parsing: ' + error.message.toLowerCase()));
-                return;
+    var anime;
+    var reg = /<anime>(((?!<\/anime).)*)/g;
+
+    while (anime = reg.exec(data)) {
+        anime = anime[1];
+
+        var title = utils.getMatchGroup(anime.match(/<series_title>(((?!<\/series_title).)*)/), 1, 'string');
+        var synonyms = utils.getMatchGroup(anime.match(/<series_synonyms>(((?!<\/series_synonyms).)*)/), 1, 'string').split('; ');
+        var formattedSynonyms = [];
+
+        synonyms.forEach(function (synonym) {
+            if (synonym && synonym !== title) {
+                formattedSynonyms.push(synonym);
             }
-
-            if (!res.myanimelist) {
-                reject(new Error('Invalid data received from myanimelist'));
-                return;
-            }
-
-            if (res.myanimelist.error) {
-                reject(new Error(String(res.myAnimeList.error)));
-                return;
-            }
-
-            var animelist = [];
-
-            res.myanimelist.anime.forEach(function (anime) {
-
-                var synonyms = anime.series_synonyms[0].split('; '),
-                    filteredSynonyms = [];
-
-                synonyms.forEach(function (synonym) {
-                    if (synonym && synonym !== anime.series_title[0]) {
-                        filteredSynonyms.push(synonym);
-                    }
-                });
-
-                animelist.push({
-                    endDate: Date.parse(anime.series_end[0]) || null,
-                    episodes: parseInt(anime.series_episodes[0]),
-                    id: parseInt(anime.series_animedb_id[0]),
-                    imageUrl: anime.series_image[0],
-                    myFinishDate: Date.parse(anime.my_finish_date[0]) || null,
-                    myScore: parseInt(anime.my_score[0]),
-                    myStartDate: Date.parse(anime.my_start_date[0]) || null,
-                    myStatus: myStatus[anime.my_status[0]],
-                    myWatchedEpisodes: parseInt(anime.my_watched_episodes[0]),
-                    startDate: Date.parse(anime.series_start[0]) || null,
-                    status: status[anime.series_status[0]],
-                    synonyms: filteredSynonyms,
-                    title: anime.series_title[0],
-                    type: types[anime.series_type[0]]
-                });
-            });
-
-            resolve(animelist);
         });
-    });
+
+        animeList.push({
+            endDate: utils.getMatchGroup(anime.match(/<series_end>(((?!<\/series_end).)*)/), 1, 'date'),
+            episodes: utils.getMatchGroup(anime.match(/<series_episodes>(((?!<\/series_episodes).)*)/), 1, 'int'),
+            id: utils.getMatchGroup(anime.match(/<series_animedb_id>(((?!<\/series_animedb_id).)*)/), 1, 'int'),
+            imageUrl: utils.getMatchGroup(anime.match(/<series_image>(((?!<\/series_image).)*)/), 1, 'string'),
+            myFinishDate: utils.getMatchGroup(anime.match(/<my_finish_date>(((?!<\/my_finish_date).)*)/), 1, 'date'),
+            myScore: utils.getMatchGroup(anime.match(/<my_score>(((?!<\/my_score).)*)/), 1, 'int'),
+            myStartDate: utils.getMatchGroup(anime.match(/<my_start_date>(((?!<\/my_start_date).)*)/), 1, 'date'),
+            myStatus: myStatus[utils.getMatchGroup(anime.match(/<my_status>(((?!<\/my_status).)*)/), 1, 'int')],
+            myWatchedEpisodes: utils.getMatchGroup(anime.match(/<my_watched_episodes>(((?!<\/my_watched_episodes).)*)/), 1, 'int'),
+            startDate: utils.getMatchGroup(anime.match(/<series_start>(((?!<\/series_start).)*)/), 1, 'date'),
+            status: status[utils.getMatchGroup(anime.match(/<series_status>(((?!<\/series_status).)*)/), 1, 'int')],
+            synonyms: formattedSynonyms,
+            title: title,
+            type: types[utils.getMatchGroup(anime.match(/<series_type>(((?!<\/series_type).)*)/), 1, 'int')]
+        });
+    }
+
+    return animeList;
 }

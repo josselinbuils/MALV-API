@@ -28,7 +28,7 @@ function animeHandler(req, res, next) {
         try {
             res.json(formatAnime(data));
         } catch (error) {
-            error.message = 'Cannot format details of anime ' + id;
+            error.message = 'Cannot format details of anime ' + id + ': ' + error.message.toLowerCase();
             next(error);
         }
 
@@ -46,8 +46,6 @@ function animeHandler(req, res, next) {
 function formatAnime(data) {
     var anime = {};
 
-    // Get synonyms
-
     var match;
     var reg = /<span[^>]*>(English|Synonyms):<\/span>\s?(.*)/g;
     var synonyms = [];
@@ -56,16 +54,18 @@ function formatAnime(data) {
         synonyms = synonyms.concat(match[2].split(', '));
     }
 
-    // Get start timestamp
-
     var aired = data.match(/<span[^>]*>Aired:<\/span>\s*(.*)/)[1];
     var startDate = Date.parse(aired.match(/(((?! to)[^?])*)/)[1]) || null;
 
-    // Fill the anime object
+    var genres = data.match(/<span[^>]*>Genres:<\/span>\s*((<a[^>]*[^<]*<\/a>(, )?)*)\s*<\/div>/);
+
+    if (genres) {
+        genres = genres[1].replace(/<[^>]*>/g, '').split(', ');
+    }
 
     anime.endDate = aired.indexOf(' to ') !== -1 ? (Date.parse(aired.match(/to ([^?]*)/)[1]) || null) : startDate;
     anime.episodes = data.match(/<span[^>]*>Episodes:<\/span>\s*(\d*)/)[1];
-    anime.genres = data.match(/<span[^>]*>Genres:<\/span>\s*((<a[^>]*[^<]*<\/a>(, )?)*)\s*<\/div>/)[1].replace(/<[^>]*>/g, '').split(', ');
+    anime.genres = genres;
     anime.imageUrl = data.match(/<img src="([^"]*)"[^>]*itemprop="image">/)[1];
     anime.membersScore = parseFloat(data.match(/<span\s*itemprop="ratingValue"\s*>([\.\d]+)/)[1]);
     anime.popularity = parseInt(data.match(/<span[^>]*>Popularity:<\/span>\s*#(\d*)/)[1]);

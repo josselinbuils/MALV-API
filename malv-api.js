@@ -19,12 +19,9 @@ if (!config.encryptionKey) {
     throw new Error('Missing the required parameter encryptionKey in the configuration');
 }
 
-if (!config.myAnimeList || typeof config.myAnimeList !== 'object') {
-    throw new Error('Missing the required parameter myAnimeList in the configuration');
-}
-
-if (!config.myAnimeList.apiKey) {
-    throw new Error('Missing the required parameter apiKey in the configuration');
+// Avoid errors
+if (!config.myAnimeList) {
+    config.myAnimeList = {};
 }
 
 // Handlers

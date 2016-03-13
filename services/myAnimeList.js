@@ -84,7 +84,7 @@ function request(url, method, data, user, secureKey, retries) {
         var req = http.request(reqConfig, function (res) {
             var body = '';
 
-            if (res.statusCode === constants.HTTP_OK) {
+            if (res.statusCode === constants.HTTP_OK || res.statusCode === constants.HTTP_CREATED) {
                 res.setEncoding('utf8');
 
                 res.on('data', function (data) {
@@ -126,8 +126,14 @@ function request(url, method, data, user, secureKey, retries) {
         req.on('error', function (error) {
             error.message = error.code;
 
-            if (error.message === 'ETIMEDOUT') {
-                error.message = 'connection timed out'
+            switch (error.message) {
+
+                case 'ENOTFOUND':
+                    error.message = 'MyAnimeList server not found';
+                    break;
+
+                case 'ETIMEDOUT':
+                    error.message = 'Connection timed out';
             }
 
             reject(error);

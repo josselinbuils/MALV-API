@@ -25,6 +25,7 @@ if (!config.myAnimeList) {
 }
 
 // Handlers
+var addAnimeHandler = require('./handlers/addAnime');
 var animeHandler = require('./handlers/anime');
 var animeListHandler = require('./handlers/animeList');
 var errorHandler = require('./handlers/error');
@@ -47,10 +48,20 @@ app.use(bodyParser.json());
 app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     res.header('Access-Control-Allow-Origin', config.originsAllowed || constants.DEFAULT_ORIGINS_ALLOWED);
-    res.header('Access-Control-Allow-Methods', 'DELETE, GET, PATCH, POST, OPTIONS');
+    res.header('Access-Control-Allow-Methods', 'DELETE, GET, PATCH, PUT, OPTIONS');
     res.header('Content-Type', 'application/json');
     next();
 });
+
+/**
+ * @name /addanime/:user/:id/:secureKey
+ * @description Add an anime in a user anime list.
+ * @param {string} user User.
+ * @param {number} id Id of the anime.
+ * @param {string} secureKey Secure key of the user.
+ * @param {object} data JSON object containing the anime status (ex: watching). Must be provided as request data.
+ */
+app.put('/addanime/:user/:id/:secureKey', addAnimeHandler);
 
 /**
  * @name /anime/:id

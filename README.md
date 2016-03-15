@@ -361,6 +361,33 @@ JSON object that must contain the following field:
 
 `HTTP 200`
 
+### Delete anime
+Delete an anime in a user anime list.
+
+#### URL
+
+`/deleteanime/:user/:id/:secureKey`
+
+#### Method
+
+`DELETE`
+
+#### URL params
+
+- **user** *string*
+- **id** *integer*
+- **secureKey** *string* (See Verify credentials)
+
+#### Response
+
+`HTTP 200`
+
+#### Example
+
+`/deleteanime/youbi325/1/Hiuuh679Ygugbuv`
+
+`HTTP 200`
+
 ### Update anime
 Update an anime in a user anime list.
 

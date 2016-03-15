@@ -20,6 +20,17 @@ var crypt = require('../services/crypt');
 var logger = require('../services/logger');
 
 module.exports = {
+
+    /**
+     * @name del
+     * @description Make a HTTP DELETE request.
+     * @param {string} url Url to get.
+     * @param {string} user Username to use for authentication.
+     * @param {string} url Secure key to use for authentication.
+     * @returns {string} Data got.
+     */
+    del: del,
+
     /**
      * @name get
      * @description Make a HTTP GET request.
@@ -34,7 +45,7 @@ module.exports = {
      * @name get
      * @description Make a HTTP POST request.
      * @param {string} url Url to get.
-     * @param {string} xmlData XML data to send.
+     * @param {string} data Data to send.
      * @param {string} user Username to use for authentication.
      * @param {string} secureKey Secure key to use for authentication.
      * @returns {string} Data got.
@@ -45,6 +56,10 @@ module.exports = {
 var agent = new http.Agent({
     maxSockets: config.myAnimeList.maxSockets || constants.DEFAULT_MY_ANIME_LIST_MAX_SOCKETS
 });
+
+function del(url, user, secureKey) {
+    return request(url, 'DELETE', null, user, secureKey);
+}
 
 function get(url, user, secureKey) {
     return request(url, 'GET', null, user, secureKey);

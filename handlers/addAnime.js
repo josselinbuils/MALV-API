@@ -53,14 +53,14 @@ function addAnimeHandler(req, res, next) {
 
     var xml = '<?xml version="1.0" encoding="UTF-8"?><entry><status>' + myStatus[req.body.myStatus] + '</status></entry>';
 
-    myAnimeList.post(url, xml, user, secureKey).then(function (data) {
+    myAnimeList.post(url, xml, user, secureKey).then(function () {
 
         logger.log('addAnimeHandler: anime ' + id + ' added in the anime list of user ' + user + ' in ' + (new Date().getTime() - time) + 'ms');
 
         res.status(200).end();
 
     }, function (error) {
-        error.message = 'Cannot update anime ' + id + ' of user ' + user + ': ' + error.message.toLowerCase();
+        error.message = 'Cannot add anime ' + id + ' of user ' + user + ': ' + error.message.toLowerCase();
         next(error);
     });
 }

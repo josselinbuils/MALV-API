@@ -28,6 +28,7 @@ if (!config.myAnimeList) {
 var addAnimeHandler = require('./handlers/addAnime');
 var animeHandler = require('./handlers/anime');
 var animeListHandler = require('./handlers/animeList');
+var deleteAnimeHandler = require('./handlers/deleteAnime');
 var errorHandler = require('./handlers/error');
 var topListHandler = require('./handlers/topList');
 var updateAnimeHandler = require('./handlers/updateAnime');
@@ -78,6 +79,15 @@ app.get('/anime/:id', animeHandler);
  * @returns {Array} Array of JSON objects containing anime information.
  */
 app.get('/animelist/:user', animeListHandler);
+
+/**
+ * @name /deleteanime/:user/:id/:secureKey
+ * @description Delete an anime in a user anime list.
+ * @param {string} user User.
+ * @param {number} id Id of the anime.
+ * @param {string} secureKey Secure key of the user.
+ */
+app.delete('/deleteanime/:user/:id/:secureKey', deleteAnimeHandler);
 
 /**
  * @name /toplist/:name/:page

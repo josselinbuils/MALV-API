@@ -4,6 +4,8 @@
  * @author Josselin Buils <josselin.buils@gmail.com>
  */
 
+'use strict';
+
 // Services
 var logger = require('../services/logger');
 var myAnimeList = require('../services/myAnimeList');

@@ -4,6 +4,8 @@
  * @author Josselin Buils <josselin.buils@gmail.com>
  */
 
+'use strict';
+
 // Services
 var crypt = require('../services/crypt');
 var logger = require('../services/logger');

@@ -4,20 +4,21 @@
  * @author Josselin Buils <josselin.buils@gmail.com>
  */
 
+'use strict';
+
 // External libraries
 var http = require('http');
-var Promise = require('promise');
 var querystring = require('querystring');
 
 // Constants
 var constants = require('../constants');
 
 // Configuration
-var config = require('../config');
+var config = require('../../config');
 
 // Services
-var crypt = require('../services/crypt');
-var logger = require('../services/logger');
+var crypt = require('./crypt');
+var logger = require('./logger');
 
 module.exports = {
 

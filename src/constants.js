@@ -4,6 +4,8 @@
  * @author Josselin Buils <josselin.buils@gmail.com>
  */
 
+'use strict';
+
 module.exports = {
     DEFAULT_MY_ANIME_LIST_MAX_SOCKETS: 3,
     DEFAULT_MY_ANIME_LIST_RETRIES: 3,

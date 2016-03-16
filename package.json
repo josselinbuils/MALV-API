@@ -3,9 +3,8 @@
   "version": "0.0.1",
   "dependencies": {
     "body-parser": "^1.15.0",
-    "crypto": "0.0.3",
+    "crypto": "^0.0.3",
     "express": "^4.13.4",
-    "promise": "^7.1.1",
     "querystring": "^0.2.0"
   }
 }

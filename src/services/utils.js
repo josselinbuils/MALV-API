@@ -4,6 +4,8 @@
  * @author Josselin Buils <josselin.buils@gmail.com>
  */
 
+'use strict';
+
 module.exports = {
 
     /**

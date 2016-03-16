@@ -4,8 +4,10 @@
  * @author Josselin Buils <josselin.buils@gmail.com>
  */
 
+'use strict';
+
 // Configuration
-var config = require('../config');
+var config = require('../../config');
 
 // Services
 var logger = require('../services/logger');

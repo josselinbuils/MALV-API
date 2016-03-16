@@ -4,11 +4,13 @@
  * @author Josselin Buils <josselin.buils@gmail.com>
  */
 
+'use strict';
+
 // External libraries
 var fs = require('fs');
 
 // Configuration
-var config = require('../config');
+var config = require('../../config');
 
 module.exports = {
     /**

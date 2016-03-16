@@ -33,6 +33,9 @@ function verifyCredentialsHandler(req, res, next) {
 
     }, function (error) {
         if (error.status === 401) {
+
+            logger.log('verifyCredentialsHandler: credentials of user ' + user + ' verified in ' + (new Date().getTime() - time) + 'ms');
+
             res.json({
                 authenticated: false
             });

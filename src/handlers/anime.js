@@ -37,7 +37,7 @@ function animeHandler(req, res, next) {
         logger.log('animeHandler: details of anime ' + id + ' got in ' + (new Date().getTime() - time) + 'ms');
 
         try {
-            res.json(formatAnime(data, parseInt(id)));
+            res.json(formatAnime(data));
         } catch (error) {
             error.message = 'Cannot format details of anime ' + id + ': ' + error.message.toLowerCase();
             next(error);
@@ -54,7 +54,7 @@ function animeHandler(req, res, next) {
  * @description Format anime data from MyAnimeList.
  * @param {string} data Data to format.
  */
-function formatAnime(data, id) {
+function formatAnime(data) {
     var anime = {};
 
     var match;
@@ -77,7 +77,6 @@ function formatAnime(data, id) {
     anime.endDate = aired.indexOf(' to ') !== -1 ? utils.getMatchGroup(aired.match(/to ([^?]*)/), 1, 'date') : startDate;
     anime.episodes = utils.getMatchGroup(data.match(/<span[^>]*>Episodes:<\/span>\s*(\d*)/), 1, 'int');
     anime.genres = genres;
-    anime.id = id;
     anime.imageUrl = utils.getMatchGroup(data.match(/<img src="([^"]*)"[^>]*itemprop="image">/), 1, 'string');
     anime.membersScore = utils.getMatchGroup(data.match(/<span\s*itemprop="ratingValue"\s*>([\.\d]+)/), 1, 'float');
     anime.popularity = utils.getMatchGroup(data.match(/<span[^>]*>Popularity:<\/span>\s*#(\d*)/), 1, 'int');

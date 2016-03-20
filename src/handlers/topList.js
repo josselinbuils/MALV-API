@@ -6,6 +6,12 @@
 
 'use strict';
 
+// Constants
+var constants = require('../constants');
+
+// Configuration
+var config = require('../../config');
+
 // Services
 var logger = require('../services/logger');
 var myAnimeList = require('../services/myAnimeList');
@@ -27,6 +33,11 @@ function topListHandler(req, res, next) {
     var url = '/topanime.php?limit=' + ((req.params.page - 1) * 50) + (name !== 'all' ? '&type=' + name : '');
 
     logger.log('topListHandler: get page ' + page + ' of top ' + name);
+
+    if (config.mock === true) {
+        logger.log('topListHandler: mock top list sent');
+        res.json(constants.MOCK_TOP_LIST);
+    }
 
     myAnimeList.get(url).then(function (data) {
 

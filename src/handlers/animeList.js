@@ -6,6 +6,9 @@
 
 'use strict';
 
+// Constants
+var constants = require('../constants');
+
 // Configuration
 var config = require('../../config');
 
@@ -23,6 +26,11 @@ function animeListHandler(req, res, next) {
     var url = '/malappinfo.php?u=' + user + '&status=all';
 
     logger.log('animeListHandler: get animelist of user ' + user);
+
+    if (config.mock === true) {
+        logger.log('animeListHandler: mock anime list sent');
+        res.json(constants.MOCK_ANIME_LIST);
+    }
 
     myAnimeList.get(url).then(function (data) {
 

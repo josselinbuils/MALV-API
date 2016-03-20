@@ -29,7 +29,7 @@ function animeListHandler(req, res, next) {
 
     if (config.mock === true) {
         logger.log('animeListHandler: mock anime list sent');
-        res.json(constants.MOCK_ANIME_LIST);
+        return res.json(constants.MOCK_ANIME_LIST);
     }
 
     myAnimeList.get(url).then(function (data) {

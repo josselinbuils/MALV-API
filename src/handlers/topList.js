@@ -36,7 +36,7 @@ function topListHandler(req, res, next) {
 
     if (config.mock === true) {
         logger.log('topListHandler: mock top list sent');
-        res.json(constants.MOCK_TOP_LIST);
+        return res.json(constants.MOCK_TOP_LIST);
     }
 
     myAnimeList.get(url).then(function (data) {

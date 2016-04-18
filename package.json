@@ -1,6 +1,9 @@
 {
   "name": "malv-api",
   "version": "0.0.1",
+  "scripts": {
+    "start": "node malv-api"
+  },
   "dependencies": {
     "body-parser": "^1.15.0",
     "crypto": "^0.0.3",

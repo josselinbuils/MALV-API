@@ -60,7 +60,7 @@ app.use(function (req, res, next) {
  * @param {string} secureKey Secure key of the user.
  * @param {object} data JSON object containing the anime status (ex: watching). Must be provided as request data.
  */
-app.put('/addanime/:user/:id/:secureKey', addAnimeHandler);
+app.put('/api/addanime/:user/:id/:secureKey', addAnimeHandler);
 
 /**
  * @name /anime/:id
@@ -68,7 +68,7 @@ app.put('/addanime/:user/:id/:secureKey', addAnimeHandler);
  * @param {number} id Id of the anime.
  * @returns {object} JSON object containing the details.
  */
-app.get('/anime/:id', animeHandler);
+app.get('/api/anime/:id', animeHandler);
 
 /**
  * @name /animelist/:user
@@ -76,7 +76,7 @@ app.get('/anime/:id', animeHandler);
  * @param {string} user User.
  * @returns {Array} Array of JSON objects containing anime information.
  */
-app.get('/animelist/:user', animeListHandler);
+app.get('/api/animelist/:user', animeListHandler);
 
 /**
  * @name /deleteanime/:user/:id/:secureKey
@@ -85,7 +85,7 @@ app.get('/animelist/:user', animeListHandler);
  * @param {number} id Id of the anime.
  * @param {string} secureKey Secure key of the user.
  */
-app.delete('/deleteanime/:user/:id/:secureKey', deleteAnimeHandler);
+app.delete('/api/deleteanime/:user/:id/:secureKey', deleteAnimeHandler);
 
 /**
  * @name /toplist/:name/:page
@@ -94,7 +94,7 @@ app.delete('/deleteanime/:user/:id/:secureKey', deleteAnimeHandler);
  * @param {number} page Page.
  * @returns {Array} Array of JSON objects containing anime information.
  */
-app.get('/toplist/:name/:page', topListHandler);
+app.get('/api/toplist/:name/:page', topListHandler);
 
 /**
  * @name /updateanime/:user/:id/:secureKey
@@ -104,7 +104,7 @@ app.get('/toplist/:name/:page', topListHandler);
  * @param {string} secureKey Secure key of the user.
  * @param {object} data JSON object containing the fields to update. Must be provided as request data.
  */
-app.patch('/updateanime/:user/:id/:secureKey', updateAnimeHandler);
+app.patch('/api/updateanime/:user/:id/:secureKey', updateAnimeHandler);
 
 /**
  * @name /verifycredentials/:user/:password
@@ -113,7 +113,7 @@ app.patch('/updateanime/:user/:id/:secureKey', updateAnimeHandler);
  * @param {string} password Password.
  * @returns {object} JSON object containing the verification result.
  */
-app.get('/verifycredentials/:user/:password', verifyCredentialsHandler);
+app.get('/api/verifycredentials/:user/:password', verifyCredentialsHandler);
 
 // Handle errors
 app.use(errorHandler);

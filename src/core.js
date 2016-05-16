@@ -16,7 +16,7 @@ var constants = require('./constants');
 var config = require('./../config');
 
 if (!config.encryptionKey) {
-    throw new Error('Missing the required parameter encryptionKey in the configuration');
+    throw Error('Missing the required parameter encryptionKey in the configuration');
 }
 
 // Avoid errors
@@ -118,7 +118,7 @@ app.get('/verifycredentials/:user/:password', verifyCredentialsHandler);
 // Handle errors
 app.use(errorHandler);
 
-var port = config.port || constants.DEFAULT_PORT;
+var port = process.env.PORT || config.port || constants.DEFAULT_PORT;
 
 // Run the API server
 app.listen(port);

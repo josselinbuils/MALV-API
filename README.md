@@ -39,7 +39,7 @@ Here are the possible options:
   - **Default value:** *
 
 - **port** {integer}
-  - **Description:** Port used to run the API.
+  - **Description:** Port used to run the API. Can also be provided as environment variable PORT.
   - **Default value:** 8080
 
 - **stackTraceLimit** {integer}

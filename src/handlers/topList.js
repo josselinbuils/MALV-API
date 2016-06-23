@@ -73,7 +73,7 @@ function formatTopList(data) {
         var animeData = match[0];
 
         anime.id = utils.getMatchGroup(animeData.match(/rel="#info([^"]*)/), 1, 'int');
-        anime.imageUrl = utils.getMatchGroup(animeData.match(/<img[^>]*src="([^"]*)t.jpg"/), 1, 'string') + '.jpg';
+        anime.imageUrl = utils.getMatchGroup(animeData.match(/<img[^>]*data-src="([^?]*)/), 1, 'string').replace('/r/50x70', '');
         anime.topRank = utils.getMatchGroup(animeData.match(/<span[^>]*top-anime-rank[^>]*>(\d*)/), 1, 'int');
         anime.membersScore = utils.getMatchGroup(animeData.match(/<td class="score[^>]*>.*<span[^>]*>((\d||\.)*)/), 1, 'float');
         anime.title = utils.getMatchGroup(animeData.match(/<a class="hoverinfo_trigger[^>]*>([^<]*)<\/a>/), 1, 'string');

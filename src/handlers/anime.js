@@ -77,7 +77,7 @@ function formatAnime(data) {
     anime.endDate = aired.indexOf(' to ') !== -1 ? utils.getMatchGroup(aired.match(/to ([^?]*)/), 1, 'date') : startDate;
     anime.episodes = utils.getMatchGroup(data.match(/<span[^>]*>Episodes:<\/span>\s*(\d*)/), 1, 'int');
     anime.genres = genres;
-    anime.imageUrl = utils.getMatchGroup(data.match(/<img src="([^"]*)"[^>]*itemprop="image">/), 1, 'string');
+    anime.imageUrl = utils.getMatchGroup(data.match(/<meta property="og:image" content="([^"]*)/), 1, 'string');
     anime.membersScore = utils.getMatchGroup(data.match(/<span\s*itemprop="ratingValue"\s*>([\.\d]+)/), 1, 'float');
     anime.popularity = utils.getMatchGroup(data.match(/<span[^>]*>Popularity:<\/span>\s*#(\d*)/), 1, 'int');
     anime.rank = utils.getMatchGroup(data.match(/<span[^>]*>Ranked:<\/span>\s*#(\d*)/), 1, 'int');

@@ -30,6 +30,7 @@ var animeHandler = require('./handlers/anime');
 var animeListHandler = require('./handlers/animeList');
 var deleteAnimeHandler = require('./handlers/deleteAnime');
 var errorHandler = require('./handlers/error');
+var searchHandler = require('./handlers/search');
 var topListHandler = require('./handlers/topList');
 var updateAnimeHandler = require('./handlers/updateAnime');
 var verifyCredentialsHandler = require('./handlers/verifyCredentials');
@@ -86,6 +87,22 @@ app.get('/api/animelist/:user', animeListHandler);
  * @param {string} secureKey Secure key of the user.
  */
 app.delete('/api/deleteanime/:user/:id/:secureKey', deleteAnimeHandler);
+
+/**
+ * @name /search/:q
+ * @description Provide the result of a search.
+ * @param {string} q Query.
+ * @returns {Array} Array of JSON objects containing anime information.
+ */
+app.get('/api/search/:q', searchHandler);
+
+/**
+ * @name /search/:q/:stype/:score/:status/:r/:sm/:sy/:em/:ey
+ * @description Provide the result of a search.
+ * @param TODO
+ * @returns {Array} Array of JSON objects containing anime information.
+ */
+app.get('/api/search/:q/:stype/:score/:status/:r/:sm/:sy/:em/:ey', searchHandler);
 
 /**
  * @name /toplist/:name/:page

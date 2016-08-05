@@ -17,7 +17,7 @@ function searchHandler(req, res, next) {
 
     var query = req.params.q;
     var time = new Date().getTime();
-    var url = '/anime.php?q=' + query.replace(' ', '+');
+    var url = '/anime.php?q=' + query.replace(/ /g, '+');
 
     if (req.params.stype !== undefined) {
         url += '&type=' + req.params.stype + '&score=' + req.params.score + '&status=' + req.params.status + '&r=' + req.params.r + '&sm=' + req.params.sm + '&sy=' + req.params.sy + '&em=' + req.params.em + '&ey=' + req.params.ey;

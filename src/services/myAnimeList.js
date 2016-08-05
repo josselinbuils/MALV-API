@@ -71,6 +71,7 @@ function post(url, data, user, secureKey) {
 }
 
 function request(url, method, data, user, secureKey, retries) {
+    logger.log('myAnimeList: ' + method + ' ' + url);
 
     return new Promise(function (resolve, reject) {
 

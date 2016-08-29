@@ -7,7 +7,7 @@
 'use strict';
 
 // External libraries
-var http = require('http');
+var http = require('https');
 var querystring = require('querystring');
 
 // Constants
